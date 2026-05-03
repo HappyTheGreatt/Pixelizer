@@ -1,0 +1,935 @@
+<div id="app"></div>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg: #0a0e14;
+    --bg-2: #11161f;
+    --panel: #161c27;
+    --border: #2a3447;
+    --text: #d4dae5;
+    --dim: #6b7689;
+    --accent: #ff5277;
+    --accent-2: #5cffba;
+    --accent-3: #ffd84d;
+    --grid: rgba(255, 82, 119, 0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body {
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+      radial-gradient(circle at 20% 0%, rgba(255, 82, 119, 0.08), transparent 50%),
+      radial-gradient(circle at 80% 100%, rgba(92, 255, 186, 0.06), transparent 50%);
+    background-size: 32px 32px, 32px 32px, 100% 100%, 100% 100%;
+  }
+
+  .wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  header {
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 22px;
+    color: var(--text);
+    letter-spacing: 2px;
+    line-height: 1.4;
+  }
+  .title .px {
+    color: var(--accent);
+    text-shadow: 3px 3px 0 var(--accent-2);
+  }
+  .subtitle {
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    color: var(--dim);
+    margin-top: 8px;
+    letter-spacing: 1px;
+  }
+  .badge {
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    color: var(--accent-3);
+    border: 1px solid var(--accent-3);
+    padding: 4px 12px;
+    letter-spacing: 2px;
+  }
+  .badge::before { content: '▸ '; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 20px;
+    position: relative;
+  }
+  .panel::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px;
+    width: 12px; height: 12px;
+    border-top: 2px solid var(--accent);
+    border-left: 2px solid var(--accent);
+  }
+  .panel::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; right: -1px;
+    width: 12px; height: 12px;
+    border-bottom: 2px solid var(--accent-2);
+    border-right: 2px solid var(--accent-2);
+  }
+
+  .section-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .section-label.alt { color: var(--accent-2); }
+  .section-label.alt2 { color: var(--accent-3); }
+
+  .control { margin-bottom: 18px; }
+  .control:last-child { margin-bottom: 0; }
+
+  label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 12px;
+    color: var(--dim);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  label .val {
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    color: var(--text);
+    letter-spacing: 0;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 18px;
+    background: var(--accent);
+    border: 1px solid var(--text);
+    cursor: pointer;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 18px;
+    background: var(--accent);
+    border: 1px solid var(--text);
+    cursor: pointer;
+    border-radius: 0;
+  }
+
+  select {
+    width: 100%;
+    background: var(--bg-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23ff5277' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+  }
+  select:focus { outline: 1px solid var(--accent); }
+
+  .btn {
+    display: inline-block;
+    width: 100%;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.1s;
+  }
+  .btn:hover {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--accent-2);
+  }
+  .btn:active { transform: translate(0, 0); box-shadow: 0 0 0 var(--accent-2); }
+  .btn.primary {
+    background: var(--accent-2);
+    color: var(--bg);
+    border-color: var(--accent-2);
+  }
+  .btn.primary:hover {
+    background: var(--accent-3);
+    border-color: var(--accent-3);
+    color: var(--bg);
+    box-shadow: 4px 4px 0 var(--accent);
+  }
+  .btn-row { display: flex; gap: 8px; }
+  .btn-row .btn { flex: 1; }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .checkbox-row input { display: none; }
+  .checkbox-box {
+    width: 14px; height: 14px;
+    border: 1px solid var(--border);
+    background: var(--bg-2);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .checkbox-row input:checked + .checkbox-box {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .checkbox-row input:checked + .checkbox-box::after {
+    content: '';
+    position: absolute;
+    top: 1px; left: 4px;
+    width: 4px; height: 8px;
+    border: solid var(--bg);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .checkbox-row span:last-child {
+    font-size: 12px;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .palette-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-top: 8px;
+    padding: 4px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    min-height: 28px;
+  }
+  .palette-preview .swatch {
+    width: 18px; height: 18px;
+    border: 1px solid rgba(0,0,0,0.4);
+  }
+
+  .canvas-area {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-image:
+      linear-gradient(45deg, #0d1219 25%, transparent 25%),
+      linear-gradient(-45deg, #0d1219 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #0d1219 75%),
+      linear-gradient(-45deg, transparent 75%, #0d1219 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    overflow: auto;
+    padding: 24px;
+  }
+  .canvas-area canvas {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    max-width: 100%;
+    height: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  }
+
+  .drop-zone {
+    text-align: center;
+    color: var(--dim);
+    font-family: 'VT323', monospace;
+    padding: 60px 24px;
+    width: 100%;
+  }
+  .drop-zone.over {
+    background: rgba(255, 82, 119, 0.08);
+    outline: 2px dashed var(--accent);
+    outline-offset: -12px;
+  }
+  .drop-zone .big {
+    font-size: 48px;
+    color: var(--accent);
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+  }
+  .drop-zone .small {
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+  .drop-zone .hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    margin-top: 16px;
+    letter-spacing: 1px;
+  }
+
+  .stats {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    color: var(--dim);
+  }
+  .stats span { color: var(--accent-2); }
+
+  .toggle-view {
+    display: flex;
+    border: 1px solid var(--border);
+    background: var(--bg-2);
+  }
+  .toggle-view button {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--dim);
+    padding: 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    cursor: pointer;
+  }
+  .toggle-view button.active {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    color: var(--dim);
+    letter-spacing: 2px;
+  }
+  footer .blink {
+    color: var(--accent);
+    animation: blink 1s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
+
+<script type="text/babel">
+const { useState, useRef, useEffect, useCallback } = React;
+
+// ===== PALETTES =====
+const PALETTES = {
+  'auto': null, // generated from image via k-means
+  'gameboy': ['#0f380f','#306230','#8bac0f','#9bbc0f'],
+  'gameboy-pocket': ['#000000','#555555','#aaaaaa','#ffffff'],
+  'pico8': ['#000000','#1d2b53','#7e2553','#008751','#ab5236','#5f574f','#c2c3c7','#fff1e8','#ff004d','#ffa300','#ffec27','#00e436','#29adff','#83769c','#ff77a8','#ffccaa'],
+  'nes': ['#7c7c7c','#0000fc','#0000bc','#4428bc','#940084','#a80020','#a81000','#881400','#503000','#007800','#006800','#005800','#004058','#000000','#bcbcbc','#0078f8','#0058f8','#6844fc','#d800cc','#e40058','#f83800','#e45c10','#ac7c00','#00b800','#00a800','#00a844','#008888','#f8f8f8','#3cbcfc','#6888fc','#9878f8','#f878f8','#f85898','#f87858','#fca044','#f8b800','#b8f818','#58d854','#58f898','#00e8d8','#787878','#fcfcfc','#a4e4fc','#b8b8f8','#d8b8f8','#f8b8f8','#f8a4c0','#f0d0b0','#fce0a8','#f8d878','#d8f878','#b8f8b8','#b8f8d8','#00fcfc','#f8d8f8'],
+  'cga': ['#000000','#55ffff','#ff55ff','#ffffff'],
+  'commodore64': ['#000000','#ffffff','#880000','#aaffee','#cc44cc','#00cc55','#0000aa','#eeee77','#dd8855','#664400','#ff7777','#333333','#777777','#aaff66','#0088ff','#bbbbbb'],
+  'sweetie16': ['#1a1c2c','#5d275d','#b13e53','#ef7d57','#ffcd75','#a7f070','#38b764','#257179','#29366f','#3b5dc9','#41a6f6','#73eff7','#f4f4f4','#94b0c2','#566c86','#333c57'],
+  'endesga32': ['#be4a2f','#d77643','#ead4aa','#e4a672','#b86f50','#733e39','#3e2731','#a22633','#e43b44','#f77622','#feae34','#fee761','#63c74d','#3e8948','#265c42','#193c3e','#124e89','#0099db','#2ce8f5','#ffffff','#c0cbdc','#8b9bb4','#5a6988','#3a4466','#262b44','#181425','#ff0044','#68386c','#b55088','#f6757a','#e8b796','#c28569'],
+  'mono': ['#000000','#ffffff'],
+};
+
+const PALETTE_LABELS = {
+  'auto': 'AUTO (FROM IMAGE)',
+  'gameboy': 'GAME BOY (4)',
+  'gameboy-pocket': 'GB POCKET (4)',
+  'pico8': 'PICO-8 (16)',
+  'nes': 'NES (54)',
+  'cga': 'CGA (4)',
+  'commodore64': 'COMMODORE 64 (16)',
+  'sweetie16': 'SWEETIE 16',
+  'endesga32': 'ENDESGA 32',
+  'mono': 'MONOCHROME (2)',
+};
+
+// ===== HELPERS =====
+const hexToRgb = (h) => {
+  const v = parseInt(h.slice(1), 16);
+  return [(v>>16)&255, (v>>8)&255, v&255];
+};
+
+const colorDist = (r1,g1,b1,r2,g2,b2) => {
+  const dr=r1-r2, dg=g1-g2, db=b1-b2;
+  return dr*dr + dg*dg + db*db;
+};
+
+const findNearest = (r,g,b,pal) => {
+  let best = 0, bestD = Infinity;
+  for (let i=0;i<pal.length;i++) {
+    const d = colorDist(r,g,b,pal[i][0],pal[i][1],pal[i][2]);
+    if (d<bestD) { bestD=d; best=i; }
+  }
+  return pal[best];
+};
+
+// k-means for auto palette
+const kmeansPalette = (pixels, k, iterations=8) => {
+  // pixels: Uint8ClampedArray RGBA
+  const samples = [];
+  const stride = Math.max(1, Math.floor(pixels.length / 4 / 4000));
+  for (let i=0;i<pixels.length;i+=4*stride) {
+    samples.push([pixels[i], pixels[i+1], pixels[i+2]]);
+  }
+  if (samples.length === 0) return [[0,0,0]];
+  // init: pick spread-out samples
+  const centers = [];
+  centers.push(samples[Math.floor(Math.random()*samples.length)].slice());
+  while (centers.length < k) {
+    let bestIdx = 0, bestD = -1;
+    for (let i=0;i<samples.length;i+=3) {
+      let minD = Infinity;
+      for (const c of centers) {
+        const d = colorDist(samples[i][0],samples[i][1],samples[i][2],c[0],c[1],c[2]);
+        if (d<minD) minD=d;
+      }
+      if (minD > bestD) { bestD = minD; bestIdx = i; }
+    }
+    centers.push(samples[bestIdx].slice());
+  }
+  // iterate
+  for (let it=0; it<iterations; it++) {
+    const sums = centers.map(()=>[0,0,0,0]);
+    for (const s of samples) {
+      let best = 0, bestD = Infinity;
+      for (let i=0;i<centers.length;i++) {
+        const d = colorDist(s[0],s[1],s[2],centers[i][0],centers[i][1],centers[i][2]);
+        if (d<bestD) { bestD=d; best=i; }
+      }
+      sums[best][0]+=s[0]; sums[best][1]+=s[1]; sums[best][2]+=s[2]; sums[best][3]++;
+    }
+    for (let i=0;i<centers.length;i++) {
+      if (sums[i][3]>0) {
+        centers[i] = [sums[i][0]/sums[i][3]|0, sums[i][1]/sums[i][3]|0, sums[i][2]/sums[i][3]|0];
+      }
+    }
+  }
+  return centers;
+};
+
+// Bayer matrices for ordered dithering
+const BAYER_4 = [
+  [0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]
+].map(r=>r.map(v=>v/16 - 0.5));
+const BAYER_8 = (() => {
+  const m = Array.from({length:8},()=>Array(8).fill(0));
+  for (let y=0;y<8;y++) for (let x=0;x<8;x++) {
+    let v=0, mask=4;
+    let xc=x, yc=y;
+    for (let i=0;i<3;i++) {
+      const bx = (xc & mask) ? 1 : 0;
+      const by = (yc & mask) ? 1 : 0;
+      v = v*4 + (3*bx ^ by) + by*2 - bx*2;
+      // simplified: use standard formula
+      mask >>= 1;
+    }
+    m[y][x] = v;
+  }
+  // Use known 8x8 Bayer
+  const std = [
+    [0,32,8,40,2,34,10,42],
+    [48,16,56,24,50,18,58,26],
+    [12,44,4,36,14,46,6,38],
+    [60,28,52,20,62,30,54,22],
+    [3,35,11,43,1,33,9,41],
+    [51,19,59,27,49,17,57,25],
+    [15,47,7,39,13,45,5,37],
+    [63,31,55,23,61,29,53,21],
+  ];
+  return std.map(r=>r.map(v=>v/64 - 0.5));
+})();
+
+// ===== CORE PROCESSING =====
+const processImage = (sourceCanvas, opts) => {
+  const { pixelSize, paletteKey, autoColors, dither, ditherStrength, brightness, contrast, saturation, outline } = opts;
+  const sw = sourceCanvas.width;
+  const sh = sourceCanvas.height;
+  const dw = Math.max(1, Math.floor(sw / pixelSize));
+  const dh = Math.max(1, Math.floor(sh / pixelSize));
+
+  // Step 1: downscale
+  const small = document.createElement('canvas');
+  small.width = dw; small.height = dh;
+  const sctx = small.getContext('2d', { willReadFrequently: true });
+  sctx.imageSmoothingEnabled = true;
+  sctx.imageSmoothingQuality = 'high';
+  sctx.drawImage(sourceCanvas, 0, 0, dw, dh);
+
+  let img = sctx.getImageData(0,0,dw,dh);
+  const d = img.data;
+
+  // Step 2: brightness/contrast/saturation
+  const b = brightness / 100;
+  const c = contrast / 100;
+  const sat = saturation / 100;
+  for (let i=0;i<d.length;i+=4) {
+    let r=d[i], g=d[i+1], bl=d[i+2];
+    // brightness
+    r += b*255; g += b*255; bl += b*255;
+    // contrast
+    r = (r - 128) * (1+c) + 128;
+    g = (g - 128) * (1+c) + 128;
+    bl = (bl - 128) * (1+c) + 128;
+    // saturation
+    const lum = 0.299*r + 0.587*g + 0.114*bl;
+    r = lum + (r - lum) * (1+sat);
+    g = lum + (g - lum) * (1+sat);
+    bl = lum + (bl - lum) * (1+sat);
+    d[i] = Math.max(0, Math.min(255, r));
+    d[i+1] = Math.max(0, Math.min(255, g));
+    d[i+2] = Math.max(0, Math.min(255, bl));
+  }
+
+  // Step 3: build palette
+  let palette;
+  if (paletteKey === 'auto') {
+    palette = kmeansPalette(d, autoColors);
+  } else {
+    palette = PALETTES[paletteKey].map(hexToRgb);
+  }
+
+  // Step 4: dither + quantize
+  const ds = ditherStrength / 100;
+  if (dither === 'none') {
+    for (let i=0;i<d.length;i+=4) {
+      if (d[i+3] < 8) continue;
+      const c = findNearest(d[i], d[i+1], d[i+2], palette);
+      d[i]=c[0]; d[i+1]=c[1]; d[i+2]=c[2];
+    }
+  } else if (dither === 'fs') {
+    // Floyd-Steinberg
+    const buf = new Float32Array(dw*dh*3);
+    for (let i=0,j=0;i<d.length;i+=4,j+=3) {
+      buf[j]=d[i]; buf[j+1]=d[i+1]; buf[j+2]=d[i+2];
+    }
+    for (let y=0;y<dh;y++) {
+      for (let x=0;x<dw;x++) {
+        const idx = (y*dw + x)*3;
+        const oldR = buf[idx], oldG = buf[idx+1], oldB = buf[idx+2];
+        const nc = findNearest(oldR, oldG, oldB, palette);
+        buf[idx]=nc[0]; buf[idx+1]=nc[1]; buf[idx+2]=nc[2];
+        const errR = (oldR-nc[0])*ds, errG = (oldG-nc[1])*ds, errB = (oldB-nc[2])*ds;
+        const dist = (dx,dy,w) => {
+          const nx=x+dx, ny=y+dy;
+          if (nx<0||nx>=dw||ny<0||ny>=dh) return;
+          const ni = (ny*dw + nx)*3;
+          buf[ni] += errR*w;
+          buf[ni+1] += errG*w;
+          buf[ni+2] += errB*w;
+        };
+        dist(1,0, 7/16); dist(-1,1, 3/16); dist(0,1, 5/16); dist(1,1, 1/16);
+      }
+    }
+    for (let i=0,j=0;i<d.length;i+=4,j+=3) {
+      if (d[i+3] < 8) continue;
+      d[i]=Math.max(0,Math.min(255,buf[j]));
+      d[i+1]=Math.max(0,Math.min(255,buf[j+1]));
+      d[i+2]=Math.max(0,Math.min(255,buf[j+2]));
+    }
+  } else if (dither === 'bayer4' || dither === 'bayer8') {
+    const matrix = dither === 'bayer4' ? BAYER_4 : BAYER_8;
+    const ms = matrix.length;
+    // amplitude scaling — divided by avg distance between palette colors heuristic
+    const amp = 48 * ds;
+    for (let y=0;y<dh;y++) {
+      for (let x=0;x<dw;x++) {
+        const i = (y*dw+x)*4;
+        if (d[i+3] < 8) continue;
+        const t = matrix[y%ms][x%ms];
+        let r = d[i] + t*amp, g = d[i+1] + t*amp, b = d[i+2] + t*amp;
+        r=Math.max(0,Math.min(255,r));
+        g=Math.max(0,Math.min(255,g));
+        b=Math.max(0,Math.min(255,b));
+        const c = findNearest(r,g,b,palette);
+        d[i]=c[0]; d[i+1]=c[1]; d[i+2]=c[2];
+      }
+    }
+  }
+
+  sctx.putImageData(img, 0, 0);
+
+  // Step 5: optional outline (detect edges in tiny image, darken)
+  if (outline) {
+    const edge = sctx.getImageData(0,0,dw,dh);
+    const ed = edge.data;
+    const out = new Uint8ClampedArray(ed);
+    for (let y=1;y<dh-1;y++) {
+      for (let x=1;x<dw-1;x++) {
+        const i=(y*dw+x)*4;
+        if (ed[i+3]<8) continue;
+        const r=ed[i],g=ed[i+1],b=ed[i+2];
+        let differ = false;
+        const offs = [[-1,0],[1,0],[0,-1],[0,1]];
+        for (const [dx,dy] of offs) {
+          const ni = ((y+dy)*dw + (x+dx))*4;
+          if (ed[ni+3]<8) { differ=true; break; }
+          if (ed[ni]!==r || ed[ni+1]!==g || ed[ni+2]!==b) { differ=true; break; }
+        }
+        if (differ) {
+          out[i] = Math.max(0, r-60);
+          out[i+1] = Math.max(0, g-60);
+          out[i+2] = Math.max(0, b-60);
+        }
+      }
+    }
+    edge.data.set(out);
+    sctx.putImageData(edge, 0, 0);
+  }
+
+  return { small, dw, dh, palette };
+};
+
+// ===== APP =====
+function App() {
+  const [image, setImage] = useState(null);
+  const [imageInfo, setImageInfo] = useState(null);
+  const [pixelSize, setPixelSize] = useState(8);
+  const [paletteKey, setPaletteKey] = useState('pico8');
+  const [autoColors, setAutoColors] = useState(8);
+  const [dither, setDither] = useState('bayer4');
+  const [ditherStrength, setDitherStrength] = useState(60);
+  const [brightness, setBrightness] = useState(0);
+  const [contrast, setContrast] = useState(10);
+  const [saturation, setSaturation] = useState(15);
+  const [outline, setOutline] = useState(false);
+  const [view, setView] = useState('after'); // before | after
+  const [scale, setScale] = useState('fit');
+  const [activePalette, setActivePalette] = useState([]);
+  const [outputDims, setOutputDims] = useState(null);
+  const [dragOver, setDragOver] = useState(false);
+
+  const sourceCanvasRef = useRef(document.createElement('canvas'));
+  const outputCanvasRef = useRef(null);
+  const beforeCanvasRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  const handleFile = (file) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        // Cap working size for perf
+        const maxDim = 1600;
+        let w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          const r = Math.min(maxDim/w, maxDim/h);
+          w = Math.floor(w*r); h = Math.floor(h*r);
+        }
+        const c = sourceCanvasRef.current;
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        setImage(img);
+        setImageInfo({ w, h, name: file.name });
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Process whenever inputs change
+  useEffect(() => {
+    if (!image) return;
+    const handle = setTimeout(() => {
+      const result = processImage(sourceCanvasRef.current, {
+        pixelSize, paletteKey, autoColors, dither, ditherStrength,
+        brightness, contrast, saturation, outline
+      });
+      setActivePalette(result.palette);
+      setOutputDims({ w: result.dw, h: result.dh });
+
+      // Render to output canvas at original-ish size, with crisp pixels
+      const out = outputCanvasRef.current;
+      if (out) {
+        out.width = result.dw;
+        out.height = result.dh;
+        const octx = out.getContext('2d');
+        octx.imageSmoothingEnabled = false;
+        octx.drawImage(result.small, 0, 0);
+      }
+      // Before
+      const before = beforeCanvasRef.current;
+      if (before) {
+        before.width = sourceCanvasRef.current.width;
+        before.height = sourceCanvasRef.current.height;
+        before.getContext('2d').drawImage(sourceCanvasRef.current, 0, 0);
+      }
+    }, 60);
+    return () => clearTimeout(handle);
+  }, [image, pixelSize, paletteKey, autoColors, dither, ditherStrength, brightness, contrast, saturation, outline]);
+
+  const download = (mode) => {
+    if (!outputCanvasRef.current) return;
+    const out = outputCanvasRef.current;
+    const link = document.createElement('a');
+    if (mode === 'native') {
+      // export at the small native pixel resolution
+      link.download = (imageInfo?.name || 'pixel') + '_native.png';
+      link.href = out.toDataURL('image/png');
+    } else {
+      // upscaled to original size, crisp
+      const big = document.createElement('canvas');
+      big.width = sourceCanvasRef.current.width;
+      big.height = sourceCanvasRef.current.height;
+      const bctx = big.getContext('2d');
+      bctx.imageSmoothingEnabled = false;
+      bctx.drawImage(out, 0, 0, big.width, big.height);
+      link.download = (imageInfo?.name || 'pixel') + '_upscaled.png';
+      link.href = big.toDataURL('image/png');
+    }
+    link.click();
+  };
+
+  const reset = () => {
+    setPixelSize(8);
+    setPaletteKey('pico8');
+    setAutoColors(8);
+    setDither('bayer4');
+    setDitherStrength(60);
+    setBrightness(0);
+    setContrast(10);
+    setSaturation(15);
+    setOutline(false);
+  };
+
+  const onDrop = (e) => {
+    e.preventDefault();
+    setDragOver(false);
+    const f = e.dataTransfer.files[0];
+    handleFile(f);
+  };
+
+  const displayCanvas = view === 'after' ? outputCanvasRef : beforeCanvasRef;
+  const showOutput = !!image;
+
+  return (
+    <div className="wrap">
+      <header>
+        <div>
+          <div className="title"><span className="px">PIXEL</span>FORGE</div>
+          <div className="subtitle">// image → low-fi pixel art converter</div>
+        </div>
+        <div className="badge">v1.0 RUNTIME</div>
+      </header>
+
+      <div className="layout">
+        {/* CONTROLS */}
+        <div>
+          <div className="panel" style={{ marginBottom: 16 }}>
+            <div className="section-label">▣ Source</div>
+            <button className="btn primary" onClick={() => fileInputRef.current.click()}>
+              {image ? 'Replace Image' : 'Load Image'}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={(e) => handleFile(e.target.files[0])}
+            />
+            {imageInfo && (
+              <div style={{ marginTop: 12, fontSize: 12, color: 'var(--dim)', fontFamily: 'VT323, monospace', fontSize: 16 }}>
+                ◆ {imageInfo.w} × {imageInfo.h}
+                {outputDims && <><br/>◆ output: <span style={{color:'var(--accent-2)'}}>{outputDims.w} × {outputDims.h}</span></>}
+              </div>
+            )}
+          </div>
+
+          <div className="panel" style={{ marginBottom: 16 }}>
+            <div className="section-label alt">▤ Resolution</div>
+            <div className="control">
+              <label>Pixel size <span className="val">{pixelSize}px</span></label>
+              <input type="range" min="2" max="32" value={pixelSize} onChange={(e) => setPixelSize(+e.target.value)} />
+            </div>
+          </div>
+
+          <div className="panel" style={{ marginBottom: 16 }}>
+            <div className="section-label alt2">◈ Palette</div>
+            <div className="control">
+              <select value={paletteKey} onChange={(e) => setPaletteKey(e.target.value)}>
+                {Object.keys(PALETTES).map(k => (
+                  <option key={k} value={k}>{PALETTE_LABELS[k]}</option>
+                ))}
+              </select>
+            </div>
+            {paletteKey === 'auto' && (
+              <div className="control">
+                <label>Colors <span className="val">{autoColors}</span></label>
+                <input type="range" min="2" max="32" value={autoColors} onChange={(e) => setAutoColors(+e.target.value)} />
+              </div>
+            )}
+            {activePalette.length > 0 && (
+              <div className="palette-preview">
+                {activePalette.map((c,i) => (
+                  <div key={i} className="swatch" style={{ background: `rgb(${c[0]},${c[1]},${c[2]})` }} title={`rgb(${c[0]},${c[1]},${c[2]})`} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="panel" style={{ marginBottom: 16 }}>
+            <div className="section-label">◌ Dither</div>
+            <div className="control">
+              <select value={dither} onChange={(e) => setDither(e.target.value)}>
+                <option value="none">NONE</option>
+                <option value="fs">FLOYD-STEINBERG</option>
+                <option value="bayer4">BAYER 4×4</option>
+                <option value="bayer8">BAYER 8×8</option>
+              </select>
+            </div>
+            {dither !== 'none' && (
+              <div className="control">
+                <label>Strength <span className="val">{ditherStrength}%</span></label>
+                <input type="range" min="0" max="200" value={ditherStrength} onChange={(e) => setDitherStrength(+e.target.value)} />
+              </div>
+            )}
+          </div>
+
+          <div className="panel" style={{ marginBottom: 16 }}>
+            <div className="section-label alt">≋ Image</div>
+            <div className="control">
+              <label>Brightness <span className="val">{brightness}</span></label>
+              <input type="range" min="-100" max="100" value={brightness} onChange={(e) => setBrightness(+e.target.value)} />
+            </div>
+            <div className="control">
+              <label>Contrast <span className="val">{contrast}</span></label>
+              <input type="range" min="-100" max="100" value={contrast} onChange={(e) => setContrast(+e.target.value)} />
+            </div>
+            <div className="control">
+              <label>Saturation <span className="val">{saturation}</span></label>
+              <input type="range" min="-100" max="100" value={saturation} onChange={(e) => setSaturation(+e.target.value)} />
+            </div>
+            <div className="control">
+              <label className="checkbox-row">
+                <input type="checkbox" checked={outline} onChange={(e) => setOutline(e.target.checked)} />
+                <span className="checkbox-box"></span>
+                <span>Outline edges</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="panel">
+            <div className="section-label alt2">▼ Export</div>
+            <div className="btn-row" style={{ marginBottom: 8 }}>
+              <button className="btn" onClick={() => download('native')} disabled={!image}>Native PX</button>
+              <button className="btn" onClick={() => download('upscaled')} disabled={!image}>Upscaled</button>
+            </div>
+            <button className="btn" onClick={reset}>Reset Settings</button>
+          </div>
+        </div>
+
+        {/* CANVAS */}
+        <div>
+          {showOutput && (
+            <div className="toggle-view" style={{ marginBottom: 12 }}>
+              <button className={view === 'before' ? 'active' : ''} onClick={() => setView('before')}>◐ Original</button>
+              <button className={view === 'after' ? 'active' : ''} onClick={() => setView('after')}>◑ Pixelated</button>
+            </div>
+          )}
+          <div
+            className="canvas-area"
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={onDrop}
+          >
+            {!image && (
+              <div className={`drop-zone ${dragOver ? 'over' : ''}`}>
+                <div className="big">[ + ]</div>
+                <div className="small">DROP IMAGE OR CLICK LOAD</div>
+                <div className="hint">PNG · JPG · WEBP · GIF · max 1600px</div>
+              </div>
+            )}
+            <canvas
+              ref={outputCanvasRef}
+              style={{ display: image && view === 'after' ? 'block' : 'none' }}
+            />
+            <canvas
+              ref={beforeCanvasRef}
+              style={{ display: image && view === 'before' ? 'block' : 'none', imageRendering: 'auto' }}
+            />
+          </div>
+          {image && (
+            <div className="stats">
+              <div>palette: <span>{activePalette.length}</span> colors</div>
+              <div>resolution: <span>{outputDims?.w} × {outputDims?.h}</span></div>
+              <div>scaled from: <span>{imageInfo?.w} × {imageInfo?.h}</span></div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <footer>
+        ◢ READY <span className="blink">█</span>  &nbsp;//&nbsp; ALL PROCESSING LOCAL · NO UPLOADS
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('app')).render(<App />);
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
