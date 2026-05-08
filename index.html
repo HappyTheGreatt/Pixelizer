@@ -8,13 +8,17 @@
     --bg-2: #11161f;
     --bg-3: #0d1219;
     --panel: #161c27;
+    --panel-2: #1a212e;
     --border: #2a3447;
+    --border-soft: #1f2735;
     --text: #d4dae5;
     --dim: #6b7689;
+    --dim-2: #4a5468;
     --accent: #ff5277;
     --accent-2: #5cffba;
     --accent-3: #ffd84d;
     --accent-4: #b56cff;
+    --accent-5: #5cb8ff;
     --grid: rgba(255, 82, 119, 0.06);
   }
 
@@ -24,7 +28,8 @@
     background: var(--bg);
     color: var(--text);
     font-family: 'JetBrains Mono', monospace;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
   }
 
   body {
@@ -36,133 +41,164 @@
     background-size: 32px 32px, 32px 32px, 100% 100%, 100% 100%;
   }
 
-  .wrap {
-    max-width: 1500px;
-    margin: 0 auto;
-    padding: 24px 20px 64px;
+  .app-shell {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
+  /* === HEADER === */
   header {
+    flex-shrink: 0;
     border-bottom: 1px dashed var(--border);
-    padding-bottom: 20px;
-    margin-bottom: 24px;
+    padding: 14px 24px;
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px;
+    background: rgba(10, 14, 20, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 10;
   }
   .title {
     font-family: 'Press Start 2P', monospace;
-    font-size: 20px;
+    font-size: 16px;
     color: var(--text);
     letter-spacing: 2px;
-    line-height: 1.4;
   }
-  .title .px { color: var(--accent); text-shadow: 3px 3px 0 var(--accent-2); }
-  .title .v { font-size: 12px; color: var(--accent-3); margin-left: 8px; vertical-align: super; }
+  .title .px { color: var(--accent); text-shadow: 2px 2px 0 var(--accent-2); }
+  .title .v { font-size: 9px; color: var(--accent-3); margin-left: 6px; vertical-align: super; }
   .subtitle {
     font-family: 'VT323', monospace;
-    font-size: 20px;
+    font-size: 16px;
     color: var(--dim);
-    margin-top: 4px;
+    margin-left: 12px;
     letter-spacing: 1px;
+  }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
   }
   .badge {
     font-family: 'VT323', monospace;
-    font-size: 18px;
+    font-size: 16px;
     color: var(--accent-3);
     border: 1px solid var(--accent-3);
-    padding: 4px 12px;
+    padding: 3px 10px;
     letter-spacing: 2px;
   }
   .badge::before { content: '▸ '; }
 
-  .layout {
+  /* === MAIN LAYOUT === */
+  .main {
+    flex: 1;
     display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 20px;
+    grid-template-columns: 340px 1fr;
+    overflow: hidden;
+    min-height: 0;
   }
-  @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } }
+  @media (max-width: 1100px) {
+    .main { grid-template-columns: 1fr; grid-template-rows: 50vh 1fr; }
+  }
 
-  .controls-col {
+  /* === SIDEBAR === */
+  .sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    overflow: hidden;
+    min-height: 0;
   }
 
-  .panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    position: relative;
-  }
-  .panel::before {
-    content: '';
-    position: absolute;
-    top: -1px; left: -1px;
-    width: 10px; height: 10px;
-    border-top: 2px solid var(--accent);
-    border-left: 2px solid var(--accent);
-  }
-  .panel::after {
-    content: '';
-    position: absolute;
-    bottom: -1px; right: -1px;
-    width: 10px; height: 10px;
-    border-bottom: 2px solid var(--accent-2);
-    border-right: 2px solid var(--accent-2);
-  }
-
-  .panel-head {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
+  .tabs {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    user-select: none;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-2);
+    overflow-x: auto;
   }
-  .panel-head:hover { background: rgba(255,82,119,0.04); }
-  .panel-head .label {
+  .tab {
+    background: transparent;
+    border: none;
+    padding: 12px 14px;
     font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: var(--dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.1s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    background: var(--panel);
+  }
+
+  .tab-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .tab-content::-webkit-scrollbar { width: 6px; }
+  .tab-content::-webkit-scrollbar-thumb { background: var(--border); }
+  .tab-content::-webkit-scrollbar-track { background: transparent; }
+
+  /* === SECTIONS === */
+  .section {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--border-soft);
+  }
+  .section:last-child { border-bottom: none; }
+  .section-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
     color: var(--accent);
     letter-spacing: 2px;
+    margin-bottom: 10px;
     text-transform: uppercase;
   }
-  .panel-head.alt .label { color: var(--accent-2); }
-  .panel-head.alt2 .label { color: var(--accent-3); }
-  .panel-head.alt3 .label { color: var(--accent-4); }
-  .panel-head .chev {
-    color: var(--dim);
-    font-size: 10px;
-    transition: transform 0.15s;
-  }
-  .panel-head.collapsed .chev { transform: rotate(-90deg); }
+  .section-label.alt { color: var(--accent-2); }
+  .section-label.alt2 { color: var(--accent-3); }
+  .section-label.alt3 { color: var(--accent-4); }
+  .section-label.alt4 { color: var(--accent-5); }
 
-  .panel-body {
-    padding: 14px;
-  }
-  .panel-body.collapsed { display: none; }
-
-  .control { margin-bottom: 14px; }
+  .control { margin-bottom: 12px; }
   .control:last-child { margin-bottom: 0; }
 
   label {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--dim);
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     text-transform: uppercase;
     letter-spacing: 1px;
   }
   label .val {
     font-family: 'VT323', monospace;
-    font-size: 17px;
+    font-size: 16px;
     color: var(--text);
     letter-spacing: 0;
+  }
+
+  .hint {
+    font-family: 'VT323', monospace;
+    font-size: 13px;
+    color: var(--dim-2);
+    margin-top: 4px;
+    line-height: 1.3;
   }
 
   input[type="range"] {
@@ -170,7 +206,7 @@
     appearance: none;
     width: 100%;
     height: 4px;
-    background: var(--bg-2);
+    background: var(--bg-3);
     border: 1px solid var(--border);
     cursor: pointer;
   }
@@ -194,12 +230,12 @@
 
   select, input[type="text"], input[type="number"] {
     width: 100%;
-    background: var(--bg-2);
+    background: var(--bg-3);
     color: var(--text);
     border: 1px solid var(--border);
-    padding: 7px 10px;
+    padding: 6px 10px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 11px;
     cursor: pointer;
   }
   select {
@@ -207,7 +243,7 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23ff5277' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 10px center;
-    padding-right: 28px;
+    padding-right: 24px;
   }
   select:focus, input:focus { outline: 1px solid var(--accent); }
 
@@ -217,7 +253,7 @@
     background: transparent;
     color: var(--text);
     border: 1px solid var(--border);
-    padding: 9px;
+    padding: 8px;
     font-family: 'Press Start 2P', monospace;
     font-size: 8px;
     letter-spacing: 2px;
@@ -229,15 +265,17 @@
     background: var(--accent);
     color: var(--bg);
     border-color: var(--accent);
-    transform: translate(-2px, -2px);
-    box-shadow: 4px 4px 0 var(--accent-2);
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 var(--accent-2);
   }
   .btn:active { transform: translate(0,0); box-shadow: 0 0 0 var(--accent-2); }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
   .btn.primary { background: var(--accent-2); color: var(--bg); border-color: var(--accent-2); }
-  .btn.primary:hover { background: var(--accent-3); border-color: var(--accent-3); box-shadow: 4px 4px 0 var(--accent); }
-  .btn.small { font-size: 7px; padding: 7px; }
-  .btn-row { display: flex; gap: 6px; }
+  .btn.primary:hover { background: var(--accent-3); border-color: var(--accent-3); box-shadow: 3px 3px 0 var(--accent); }
+  .btn.warn { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .btn.small { font-size: 7px; padding: 6px; }
+  .btn.tiny { font-size: 7px; padding: 4px 6px; }
+  .btn-row { display: flex; gap: 4px; }
   .btn-row .btn { flex: 1; }
 
   .checkbox-row {
@@ -252,7 +290,7 @@
   .checkbox-box {
     width: 13px; height: 13px;
     border: 1px solid var(--border);
-    background: var(--bg-2);
+    background: var(--bg-3);
     position: relative;
     flex-shrink: 0;
   }
@@ -276,13 +314,14 @@
     letter-spacing: 1px;
   }
 
+  /* === PALETTES === */
   .palette-preview {
     display: flex;
     flex-wrap: wrap;
     gap: 2px;
-    margin-top: 8px;
+    margin-top: 6px;
     padding: 4px;
-    background: var(--bg-2);
+    background: var(--bg-3);
     border: 1px solid var(--border);
     min-height: 26px;
     max-height: 80px;
@@ -292,11 +331,9 @@
     width: 16px; height: 16px;
     border: 1px solid rgba(0,0,0,0.4);
     cursor: pointer;
-    position: relative;
   }
-  .palette-preview .swatch:hover { transform: scale(1.4); z-index: 5; }
+  .palette-preview .swatch:hover { transform: scale(1.4); z-index: 5; position: relative; }
 
-  /* Custom palette editor */
   .pal-editor { background: var(--bg-3); border: 1px solid var(--border); padding: 8px; margin-top: 6px; }
   .pal-editor-row { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
   .pal-editor-row .pal-color {
@@ -319,10 +356,10 @@
     display: none;
   }
   .pal-editor-row .pal-color:hover .x { display: block; }
-  .pal-add { display: flex; gap: 4px; align-items: center; }
+  .pal-add { display: flex; gap: 4px; align-items: center; margin-bottom: 4px; }
   .pal-add input[type="color"] {
     width: 28px; height: 24px;
-    background: var(--bg-2);
+    background: var(--bg-3);
     border: 1px solid var(--border);
     cursor: pointer;
     padding: 0;
@@ -338,14 +375,64 @@
     cursor: pointer;
   }
 
-  .canvas-area {
+  /* === CANVAS AREA === */
+  .canvas-shell {
     background: var(--bg-2);
-    border: 1px solid var(--border);
-    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .view-bar {
+    flex-shrink: 0;
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-3);
+    overflow-x: auto;
+  }
+  .view-bar button {
+    background: transparent;
+    border: none;
+    color: var(--dim);
+    padding: 10px 12px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    flex-shrink: 0;
+  }
+  .view-bar button:hover { color: var(--text); }
+  .view-bar button.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .view-bar .spacer { flex: 1; }
+  .view-bar .zoom-controls {
     display: flex;
     align-items: center;
-    justify-content: center;
-    position: relative;
+    gap: 4px;
+    padding: 0 12px;
+    color: var(--dim);
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+  }
+  .view-bar .zoom-controls button {
+    padding: 4px 8px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg-2);
+    color: var(--text);
+    cursor: pointer;
+    font-family: 'VT323', monospace;
+  }
+  .view-bar .zoom-controls button:hover { border-color: var(--accent); }
+
+  .canvas-area {
+    flex: 1;
+    background: var(--bg-2);
     background-image:
       linear-gradient(45deg, #0d1219 25%, transparent 25%),
       linear-gradient(-45deg, #0d1219 25%, transparent 25%),
@@ -355,21 +442,24 @@
     background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
     overflow: auto;
     padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
   }
   .canvas-area canvas {
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    max-width: 100%;
-    height: auto;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    display: block;
   }
+  .canvas-area canvas.smooth { image-rendering: auto; }
 
   .drop-zone {
     text-align: center;
     color: var(--dim);
     font-family: 'VT323', monospace;
     padding: 60px 24px;
-    width: 100%;
   }
   .drop-zone.over {
     background: rgba(255, 82, 119, 0.08);
@@ -383,7 +473,7 @@
     margin-bottom: 12px;
   }
   .drop-zone .small { font-size: 20px; letter-spacing: 1px; }
-  .drop-zone .hint {
+  .drop-zone .helper {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     color: var(--dim);
@@ -391,70 +481,77 @@
     letter-spacing: 1px;
   }
 
-  /* Tile preview */
+  /* tile preview */
   .tile-preview {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0;
     border: 1px solid var(--border);
-    margin-top: 8px;
     background: var(--bg-3);
+    width: max-content;
     max-width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
   }
   .tile-preview canvas {
-    width: 100%;
-    height: auto;
     display: block;
     image-rendering: pixelated;
   }
 
-  .stats {
-    margin-top: 12px;
+  .pbr-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    width: max-content;
+    max-width: 100%;
+  }
+  .pbr-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    padding: 8px;
+  }
+  .pbr-cell .pbr-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--accent-3);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .pbr-cell canvas {
+    max-width: 100%;
+    image-rendering: pixelated;
+  }
+
+  /* status bar */
+  .status-bar {
+    flex-shrink: 0;
+    background: var(--bg-3);
+    border-top: 1px solid var(--border);
+    padding: 8px 16px;
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
     font-family: 'VT323', monospace;
-    font-size: 17px;
+    font-size: 14px;
     color: var(--dim);
   }
-  .stats span { color: var(--accent-2); }
+  .status-bar span { color: var(--accent-2); }
+  .status-bar .right { margin-left: auto; }
 
-  .toggle-view {
-    display: flex;
-    border: 1px solid var(--border);
-    background: var(--bg-2);
-    margin-bottom: 12px;
-    overflow-x: auto;
-  }
-  .toggle-view button {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--dim);
-    padding: 8px 6px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    letter-spacing: 1px;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  .toggle-view button.active {
-    background: var(--accent);
-    color: var(--bg);
-  }
-
-  /* Preset panel */
+  /* presets grid */
   .presets {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 4px;
   }
   .preset-btn {
-    background: var(--bg-2);
+    background: var(--bg-3);
     border: 1px solid var(--border);
-    padding: 6px 4px;
+    padding: 6px;
     font-family: 'VT323', monospace;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text);
     cursor: pointer;
     text-align: left;
@@ -466,33 +563,42 @@
     font-size: 7px;
     letter-spacing: 1px;
     color: var(--accent-2);
+    margin-bottom: 2px;
   }
   .preset-btn:hover .pname { color: var(--accent); }
-
-  footer {
-    margin-top: 32px;
-    text-align: center;
-    font-family: 'VT323', monospace;
-    font-size: 16px;
-    color: var(--dim);
-    letter-spacing: 2px;
-  }
-  footer .blink {
-    color: var(--accent);
-    animation: blink 1s steps(2) infinite;
-  }
-  @keyframes blink { 50% { opacity: 0; } }
 
   .info-tag {
     display: inline-block;
     font-family: 'VT323', monospace;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--accent-3);
     background: rgba(255,216,77,0.08);
     border: 1px solid var(--accent-3);
     padding: 2px 6px;
     margin-bottom: 6px;
     letter-spacing: 1px;
+  }
+  .info-tag.alt { color: var(--accent-5); border-color: var(--accent-5); background: rgba(92,184,255,0.08); }
+  .info-tag.alt2 { color: var(--accent-4); border-color: var(--accent-4); background: rgba(181,108,255,0.08); }
+
+  /* histogram */
+  .histogram {
+    width: 100%;
+    height: 50px;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    margin-top: 6px;
+  }
+
+  /* shortcut tip */
+  .kbd {
+    display: inline-block;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    font-size: 10px;
+    color: var(--accent-2);
+    margin: 0 2px;
   }
 </style>
 
@@ -515,7 +621,6 @@ const PALETTES = {
   'aap16': ['#070708','#332222','#774433','#cc8855','#993311','#dd7711','#ffdd55','#ffffaa','#aaeeaa','#449944','#225522','#003366','#5577aa','#88bbdd','#bbeeff','#ffffff'],
   'lospec500': ['#10121c','#2c1e31','#6b2643','#ac2847','#ec273f','#94493a','#de5d3a','#e98537','#f3a833','#4d3533','#6e4c30','#a26d3f','#ce9248','#dab163','#e8d282','#f7f3b7','#1e4044','#006554','#26854c','#5ab552','#9de64e','#008b8b','#62a477','#a6cb96','#d3eed3','#3e3b65','#3859b3','#3388de','#36c5f4','#6dead6','#5e5b8c','#8c78a5','#b0a7b8','#deceed','#9a4d76','#c878af','#cc99ff','#fa6e79','#ffa2ac','#ffd1d5','#f6e8e0','#ffffff'],
 };
-
 const PALETTE_LABELS = {
   'auto': 'AUTO (FROM IMAGE)',
   'gameboy': 'GAME BOY (4)',
@@ -533,7 +638,6 @@ const PALETTE_LABELS = {
   'custom': 'CUSTOM PALETTE',
 };
 
-// Style presets
 const PRESETS = {
   gameboy: { name: 'GAME BOY', desc: 'classic green', settings: { pixelSize: 6, paletteKey: 'gameboy', dither: 'bayer4', ditherStrength: 70, brightness: 0, contrast: 20, saturation: 0, outline: false, hueShift: 0, posterize: 0 }},
   pico8: { name: 'PICO-8', desc: 'fantasy console', settings: { pixelSize: 8, paletteKey: 'pico8', dither: 'fs', ditherStrength: 70, brightness: 0, contrast: 15, saturation: 30, outline: false, hueShift: 0, posterize: 0 }},
@@ -591,7 +695,6 @@ const hslToRgb = (h,s,l) => {
 };
 
 const colorDist = (r1,g1,b1,r2,g2,b2) => {
-  // weighted RGB distance (approx perceptual)
   const rmean = (r1+r2)/2;
   const dr=r1-r2, dg=g1-g2, db=b1-b2;
   return (((512+rmean)*dr*dr)>>8) + 4*dg*dg + (((767-rmean)*db*db)>>8);
@@ -606,7 +709,6 @@ const findNearest = (r,g,b,pal) => {
   return pal[best];
 };
 
-// k-means++ for auto palette
 const kmeansPalette = (pixels, k, iterations=10) => {
   const samples = [];
   const stride = Math.max(1, Math.floor(pixels.length / 4 / 5000));
@@ -649,7 +751,6 @@ const kmeansPalette = (pixels, k, iterations=10) => {
   return centers;
 };
 
-// Bayer 8x8
 const BAYER_8 = [
   [0,32,8,40,2,34,10,42],
   [48,16,56,24,50,18,58,26],
@@ -660,43 +761,102 @@ const BAYER_8 = [
   [15,47,7,39,13,45,5,37],
   [63,31,55,23,61,29,53,21],
 ].map(r=>r.map(v=>v/64 - 0.5));
-
 const BAYER_4 = [
   [0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]
 ].map(r=>r.map(v=>v/16 - 0.5));
 
-// ============= TILING (offset for seamless preview / wrap) =============
+// ============= GAUSSIAN BLUR (separable) =============
+const gaussianBlur = (canvas, radius) => {
+  if (radius <= 0) return canvas;
+  const w = canvas.width, h = canvas.height;
+  const ctx = canvas.getContext('2d');
+  const src = ctx.getImageData(0,0,w,h);
+  const sd = src.data;
+  // simple box blur approximation iterated 3 times = gaussian
+  const passes = 3;
+  let buf = new Uint8ClampedArray(sd);
+  let buf2 = new Uint8ClampedArray(sd.length);
+  const r = Math.max(1, radius|0);
+  for (let p=0;p<passes;p++) {
+    // horizontal
+    for (let y=0;y<h;y++) {
+      for (let x=0;x<w;x++) {
+        let sumR=0,sumG=0,sumB=0,sumA=0,n=0;
+        for (let k=-r;k<=r;k++) {
+          let nx = x+k; if (nx<0) nx=0; if (nx>=w) nx=w-1;
+          const i = (y*w+nx)*4;
+          sumR+=buf[i]; sumG+=buf[i+1]; sumB+=buf[i+2]; sumA+=buf[i+3]; n++;
+        }
+        const i = (y*w+x)*4;
+        buf2[i]=sumR/n; buf2[i+1]=sumG/n; buf2[i+2]=sumB/n; buf2[i+3]=sumA/n;
+      }
+    }
+    // vertical
+    for (let y=0;y<h;y++) {
+      for (let x=0;x<w;x++) {
+        let sumR=0,sumG=0,sumB=0,sumA=0,n=0;
+        for (let k=-r;k<=r;k++) {
+          let ny = y+k; if (ny<0) ny=0; if (ny>=h) ny=h-1;
+          const i = (ny*w+x)*4;
+          sumR+=buf2[i]; sumG+=buf2[i+1]; sumB+=buf2[i+2]; sumA+=buf2[i+3]; n++;
+        }
+        const i = (y*w+x)*4;
+        buf[i]=sumR/n; buf[i+1]=sumG/n; buf[i+2]=sumB/n; buf[i+3]=sumA/n;
+      }
+    }
+  }
+  const out = document.createElement('canvas');
+  out.width = w; out.height = h;
+  const octx = out.getContext('2d');
+  const id = octx.createImageData(w,h);
+  id.data.set(buf);
+  octx.putImageData(id, 0, 0);
+  return out;
+};
+
+// ============= TILE-AWARE WRAP DOWNSCALE =============
+const wrapDownscale = (sourceCanvas, dw, dh) => {
+  // Tile 3x3 then downscale center cell only — eliminates edge bleeding for tileable input
+  const sw = sourceCanvas.width, sh = sourceCanvas.height;
+  const tiled = document.createElement('canvas');
+  tiled.width = sw * 3; tiled.height = sh * 3;
+  const tctx = tiled.getContext('2d');
+  for (let y=0;y<3;y++) for (let x=0;x<3;x++) {
+    tctx.drawImage(sourceCanvas, x*sw, y*sh);
+  }
+  const small = document.createElement('canvas');
+  small.width = dw; small.height = dh;
+  const sctx = small.getContext('2d');
+  sctx.imageSmoothingEnabled = true;
+  sctx.imageSmoothingQuality = 'high';
+  sctx.drawImage(tiled, sw, sh, sw, sh, 0, 0, dw, dh);
+  return small;
+};
+
+// ============= SEAMLESS =============
 const makeSeamless = (canvas, blendPx) => {
-  // tile-and-blend: shift image by (w/2, h/2), then blend the visible seams
   const w = canvas.width, h = canvas.height;
   const out = document.createElement('canvas');
   out.width = w; out.height = h;
   const octx = out.getContext('2d');
-  // wrap-shift by w/2 and h/2
   octx.drawImage(canvas, w/2, h/2);
   octx.drawImage(canvas, w/2 - w, h/2);
   octx.drawImage(canvas, w/2, h/2 - h);
   octx.drawImage(canvas, w/2 - w, h/2 - h);
 
-  // now seams are at center vertical and horizontal lines
-  // blend across the seams using gradient masks
   if (blendPx > 0) {
     const seamData = octx.getImageData(0,0,w,h);
     const sd = seamData.data;
     const orig = canvas.getContext('2d').getImageData(0,0,w,h).data;
-
-    // For each pixel, blend with the mirror across the seam by distance
-    // Vertical seam at x = w/2
     for (let y=0;y<h;y++) {
       for (let x=0;x<w;x++) {
-        const distX = Math.min(Math.abs(x - w/2), Math.abs(x - 0), Math.abs(x - w));
-        const distY = Math.min(Math.abs(y - h/2), Math.abs(y - 0), Math.abs(y - h));
+        const distX = Math.min(Math.abs(x - w/2), Math.abs(x), Math.abs(x - w));
+        const distY = Math.min(Math.abs(y - h/2), Math.abs(y), Math.abs(y - h));
         const dist = Math.min(distX, distY);
         if (dist < blendPx) {
-          const t = dist / blendPx; // 0 at seam, 1 at edge of blend zone
+          const t = dist / blendPx;
           const i = (y*w + x)*4;
-          // mix shifted (sd) with original (orig); shifted is what we have, blend more original at seams
-          const mix = 0.5 + 0.5*t; // at seam: 0.5/0.5, at edge: 1.0/0
+          const mix = 0.5 + 0.5*t;
           sd[i]   = sd[i]   * mix + orig[i]   * (1-mix);
           sd[i+1] = sd[i+1] * mix + orig[i+1] * (1-mix);
           sd[i+2] = sd[i+2] * mix + orig[i+2] * (1-mix);
@@ -705,8 +865,6 @@ const makeSeamless = (canvas, blendPx) => {
     }
     octx.putImageData(seamData, 0, 0);
   }
-
-  // shift back so the result tiles cleanly
   const final = document.createElement('canvas');
   final.width = w; final.height = h;
   const fctx = final.getContext('2d');
@@ -718,32 +876,36 @@ const makeSeamless = (canvas, blendPx) => {
 };
 
 // ============= NORMAL MAP =============
-const generateNormalMap = (canvas, strength) => {
+const generateNormalMap = (canvas, strength, invert=false, wrap=true) => {
   const w = canvas.width, h = canvas.height;
   const ctx = canvas.getContext('2d');
-  const src = ctx.getImageData(0, 0, w, h).data;
+  const src = ctx.getImageData(0,0,w,h).data;
   const out = new ImageData(w, h);
   const od = out.data;
-  // height = luminance
   const lum = new Float32Array(w*h);
   for (let i=0,j=0;i<src.length;i+=4,j++) {
     lum[j] = (0.299*src[i] + 0.587*src[i+1] + 0.114*src[i+2]) / 255;
   }
   const get = (x,y) => {
-    x = ((x % w) + w) % w; // wrap (good for tiling textures)
-    y = ((y % h) + h) % h;
+    if (wrap) {
+      x = ((x % w) + w) % w;
+      y = ((y % h) + h) % h;
+    } else {
+      x = Math.max(0, Math.min(w-1, x));
+      y = Math.max(0, Math.min(h-1, y));
+    }
     return lum[y*w + x];
   };
+  const sign = invert ? 1 : -1;
   for (let y=0;y<h;y++) {
     for (let x=0;x<w;x++) {
-      // Sobel
       const tl = get(x-1,y-1), t = get(x,y-1), tr = get(x+1,y-1);
       const l = get(x-1,y), r = get(x+1,y);
       const bl = get(x-1,y+1), b = get(x,y+1), br = get(x+1,y+1);
       const dx = (tr + 2*r + br) - (tl + 2*l + bl);
       const dy = (bl + 2*b + br) - (tl + 2*t + tr);
-      let nx = -dx * strength;
-      let ny = -dy * strength;
+      let nx = sign * dx * strength;
+      let ny = sign * dy * strength;
       let nz = 1.0;
       const len = Math.sqrt(nx*nx + ny*ny + nz*nz);
       nx /= len; ny /= len; nz /= len;
@@ -760,20 +922,189 @@ const generateNormalMap = (canvas, strength) => {
   return nc;
 };
 
-// ============= CORE PROCESSING =============
+// ============= ROUGHNESS MAP =============
+const generateRoughnessMap = (canvas, intensity=1.0, invert=false) => {
+  // Roughness from 1 - luminance variance, smoothed
+  const w = canvas.width, h = canvas.height;
+  const ctx = canvas.getContext('2d');
+  const src = ctx.getImageData(0,0,w,h).data;
+  const out = new ImageData(w,h);
+  const od = out.data;
+  const lum = new Float32Array(w*h);
+  for (let i=0,j=0;i<src.length;i+=4,j++) {
+    lum[j] = (0.299*src[i] + 0.587*src[i+1] + 0.114*src[i+2]) / 255;
+  }
+  // Local variance with 3x3 window
+  for (let y=0;y<h;y++) {
+    for (let x=0;x<w;x++) {
+      let sum=0, sumSq=0, n=0;
+      for (let dy=-1;dy<=1;dy++) {
+        for (let dx=-1;dx<=1;dx++) {
+          const nx = Math.max(0,Math.min(w-1,x+dx));
+          const ny = Math.max(0,Math.min(h-1,y+dy));
+          const v = lum[ny*w+nx];
+          sum += v; sumSq += v*v; n++;
+        }
+      }
+      const mean = sum/n;
+      const variance = sumSq/n - mean*mean;
+      // Higher variance = rougher
+      let rough = Math.min(1, Math.sqrt(variance) * 4 * intensity);
+      // Mix with inverted luminance (darker = rougher generally)
+      rough = rough * 0.7 + (1 - mean) * 0.3 * intensity;
+      if (invert) rough = 1 - rough;
+      const v = Math.max(0, Math.min(255, rough * 255));
+      const i = (y*w+x)*4;
+      od[i] = v; od[i+1] = v; od[i+2] = v; od[i+3] = 255;
+    }
+  }
+  const rc = document.createElement('canvas');
+  rc.width = w; rc.height = h;
+  rc.getContext('2d').putImageData(out, 0, 0);
+  return rc;
+};
+
+// ============= AMBIENT OCCLUSION MAP =============
+const generateAOMap = (canvas, intensity=1.0, radius=4) => {
+  const w = canvas.width, h = canvas.height;
+  const ctx = canvas.getContext('2d');
+  const src = ctx.getImageData(0,0,w,h).data;
+  const out = new ImageData(w,h);
+  const od = out.data;
+  const lum = new Float32Array(w*h);
+  for (let i=0,j=0;i<src.length;i+=4,j++) {
+    lum[j] = (0.299*src[i] + 0.587*src[i+1] + 0.114*src[i+2]) / 255;
+  }
+  // For each pixel, estimate occlusion by comparing to wider neighborhood
+  for (let y=0;y<h;y++) {
+    for (let x=0;x<w;x++) {
+      const center = lum[y*w+x];
+      let occlusion = 0, n = 0;
+      for (let dy=-radius;dy<=radius;dy+=Math.max(1,radius/4)) {
+        for (let dx=-radius;dx<=radius;dx+=Math.max(1,radius/4)) {
+          if (dx===0 && dy===0) continue;
+          const nx = Math.max(0,Math.min(w-1,x+dx|0));
+          const ny = Math.max(0,Math.min(h-1,y+dy|0));
+          const neighbor = lum[ny*w+nx];
+          if (neighbor > center) occlusion += (neighbor - center);
+          n++;
+        }
+      }
+      occlusion = occlusion / n * intensity * 6;
+      let ao = Math.max(0, Math.min(1, 1 - occlusion));
+      const v = ao * 255;
+      const i = (y*w+x)*4;
+      od[i] = v; od[i+1] = v; od[i+2] = v; od[i+3] = 255;
+    }
+  }
+  const ac = document.createElement('canvas');
+  ac.width = w; ac.height = h;
+  ac.getContext('2d').putImageData(out, 0, 0);
+  return ac;
+};
+
+// ============= HEIGHT MAP (simple) =============
+const generateHeightMap = (canvas) => {
+  const w = canvas.width, h = canvas.height;
+  const ctx = canvas.getContext('2d');
+  const src = ctx.getImageData(0,0,w,h);
+  const sd = src.data;
+  const out = new ImageData(w,h);
+  const od = out.data;
+  for (let i=0;i<sd.length;i+=4) {
+    const lum = 0.299*sd[i] + 0.587*sd[i+1] + 0.114*sd[i+2];
+    od[i] = lum; od[i+1] = lum; od[i+2] = lum; od[i+3] = 255;
+  }
+  const hc = document.createElement('canvas');
+  hc.width = w; hc.height = h;
+  hc.getContext('2d').putImageData(out, 0, 0);
+  return hc;
+};
+
+// ============= EMISSIVE MAP (bright pixels) =============
+const generateEmissiveMap = (canvas, threshold=0.85) => {
+  const w = canvas.width, h = canvas.height;
+  const ctx = canvas.getContext('2d');
+  const src = ctx.getImageData(0,0,w,h);
+  const sd = src.data;
+  const out = new ImageData(w,h);
+  const od = out.data;
+  for (let i=0;i<sd.length;i+=4) {
+    const lum = (0.299*sd[i] + 0.587*sd[i+1] + 0.114*sd[i+2]) / 255;
+    if (lum > threshold) {
+      const t = (lum - threshold) / (1 - threshold);
+      od[i] = sd[i] * t;
+      od[i+1] = sd[i+1] * t;
+      od[i+2] = sd[i+2] * t;
+      od[i+3] = 255;
+    } else {
+      od[i] = 0; od[i+1] = 0; od[i+2] = 0; od[i+3] = 255;
+    }
+  }
+  const ec = document.createElement('canvas');
+  ec.width = w; ec.height = h;
+  ec.getContext('2d').putImageData(out, 0, 0);
+  return ec;
+};
+
+// ============= HISTOGRAM =============
+const drawHistogram = (canvas, sourceCanvas) => {
+  if (!canvas || !sourceCanvas) return;
+  const sw = sourceCanvas.width, sh = sourceCanvas.height;
+  const sctx = sourceCanvas.getContext('2d');
+  const src = sctx.getImageData(0,0,sw,sh).data;
+  const histR = new Array(64).fill(0);
+  const histG = new Array(64).fill(0);
+  const histB = new Array(64).fill(0);
+  for (let i=0;i<src.length;i+=16) {
+    if (src[i+3] < 8) continue;
+    histR[src[i]>>2]++;
+    histG[src[i+1]>>2]++;
+    histB[src[i+2]>>2]++;
+  }
+  const max = Math.max(...histR, ...histG, ...histB) || 1;
+  const w = canvas.width = canvas.clientWidth;
+  const h = canvas.height = canvas.clientHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,w,h);
+  const drawChannel = (hist, color, blend) => {
+    ctx.globalCompositeOperation = blend;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(0, h);
+    for (let i=0;i<64;i++) {
+      const x = (i/63) * w;
+      const y = h - (hist[i]/max) * h;
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(w, h);
+    ctx.closePath();
+    ctx.fill();
+  };
+  drawChannel(histR, 'rgba(255,80,120,0.7)', 'screen');
+  drawChannel(histG, 'rgba(92,255,186,0.7)', 'screen');
+  drawChannel(histB, 'rgba(92,184,255,0.7)', 'screen');
+  ctx.globalCompositeOperation = 'source-over';
+};
+
+// ============= MAIN PROCESSING =============
 const processImage = (sourceCanvas, opts) => {
   const {
     pixelSize, paletteKey, customPalette, autoColors, dither, ditherStrength,
-    brightness, contrast, saturation, outline,
+    brightness, contrast, saturation, outline, outlineMode, outlineColor,
     hueShift, posterize, edgeThreshold,
     seamless, seamlessBlend, removeBg, bgThreshold,
-    outputSize, outputMode
+    outputSize, outputMode,
+    preBlur, sharpen,
+    hueR, hueG, hueB, // per-color hue rotation amounts in degrees
+    satR, satG, satB,
+    colorJitter,
+    bloom, bloomThreshold, bloomStrength,
+    isTileable
   } = opts;
 
   const sw = sourceCanvas.width;
   const sh = sourceCanvas.height;
-
-  // Determine output dimensions
   let dw, dh;
   if (outputMode === 'fixed' && outputSize) {
     dw = outputSize;
@@ -783,18 +1114,29 @@ const processImage = (sourceCanvas, opts) => {
     dh = Math.max(1, Math.floor(sh / pixelSize));
   }
 
-  // Step 1: downscale
-  const small = document.createElement('canvas');
-  small.width = dw; small.height = dh;
-  const sctx = small.getContext('2d', { willReadFrequently: true });
-  sctx.imageSmoothingEnabled = true;
-  sctx.imageSmoothingQuality = 'high';
-  sctx.drawImage(sourceCanvas, 0, 0, dw, dh);
+  // optional pre-blur (huge quality boost: removes high-freq noise before quantization)
+  let workingSource = sourceCanvas;
+  if (preBlur > 0) {
+    workingSource = gaussianBlur(sourceCanvas, preBlur);
+  }
 
+  let small;
+  if (isTileable) {
+    small = wrapDownscale(workingSource, dw, dh);
+  } else {
+    small = document.createElement('canvas');
+    small.width = dw; small.height = dh;
+    const sctx = small.getContext('2d', { willReadFrequently: true });
+    sctx.imageSmoothingEnabled = true;
+    sctx.imageSmoothingQuality = 'high';
+    sctx.drawImage(workingSource, 0, 0, dw, dh);
+  }
+
+  const sctx = small.getContext('2d', { willReadFrequently: true });
   let img = sctx.getImageData(0,0,dw,dh);
   const d = img.data;
 
-  // Step 2: image adjustments + hue shift + posterize
+  // image adjustments
   const b = brightness / 100;
   const c = contrast / 100;
   const sat = saturation / 100;
@@ -816,10 +1158,19 @@ const processImage = (sourceCanvas, opts) => {
       g = lum + (g - lum) * (1+sat);
       bl = lum + (bl - lum) * (1+sat);
     }
-    if (hs !== 0) {
+    if (hs !== 0 || hueR || hueG || hueB || satR || satG || satB) {
       let [h,s,l] = rgbToHsl(r,g,bl);
-      h = (h + hs) % 1;
+      // Per-hue saturation/hue rotation
+      // Determine which "color zone" this hue falls into
+      // Red zone: h ~ 0 / 1, Green ~ 0.33, Blue ~ 0.66
+      const wR = Math.max(0, 1 - 3 * Math.min(Math.abs(h - 0), Math.abs(h - 1)));
+      const wG = Math.max(0, 1 - 3 * Math.abs(h - 1/3));
+      const wB = Math.max(0, 1 - 3 * Math.abs(h - 2/3));
+      const hueExtra = (hueR/360) * wR + (hueG/360) * wG + (hueB/360) * wB;
+      const satExtra = (satR/100) * wR + (satG/100) * wG + (satB/100) * wB;
+      h = (h + hs + hueExtra) % 1;
       if (h < 0) h += 1;
+      s = Math.max(0, Math.min(1, s * (1 + satExtra)));
       [r,g,bl] = hslToRgb(h,s,l);
     }
     if (post > 0) {
@@ -827,29 +1178,50 @@ const processImage = (sourceCanvas, opts) => {
       g = Math.floor(g / postStep) * postStep + postStep/2;
       bl = Math.floor(bl / postStep) * postStep + postStep/2;
     }
+    if (colorJitter > 0) {
+      const jit = (Math.random() - 0.5) * colorJitter * 2;
+      r += jit; g += jit; bl += jit;
+    }
     d[i] = Math.max(0, Math.min(255, r));
     d[i+1] = Math.max(0, Math.min(255, g));
     d[i+2] = Math.max(0, Math.min(255, bl));
   }
 
-  // Step 2.5: background removal (chroma key from corners)
+  // background removal
   if (removeBg) {
-    // sample corners to find bg color
     const samples = [[0,0],[dw-1,0],[0,dh-1],[dw-1,dh-1]];
-    let br=0,bg=0,bb=0;
+    let br=0,bgC=0,bb=0;
     for (const [x,y] of samples) {
       const i=(y*dw+x)*4;
-      br += d[i]; bg += d[i+1]; bb += d[i+2];
+      br += d[i]; bgC += d[i+1]; bb += d[i+2];
     }
-    br/=4; bg/=4; bb/=4;
+    br/=4; bgC/=4; bb/=4;
     const thr = bgThreshold * bgThreshold * 100;
     for (let i=0;i<d.length;i+=4) {
-      const dist = colorDist(d[i],d[i+1],d[i+2],br,bg,bb);
+      const dist = colorDist(d[i],d[i+1],d[i+2],br,bgC,bb);
       if (dist < thr) d[i+3] = 0;
     }
   }
 
-  // Step 3: build palette
+  // sharpen (unsharp mask, simple)
+  if (sharpen > 0) {
+    const sd = new Uint8ClampedArray(d);
+    const amt = sharpen / 100;
+    for (let y=1;y<dh-1;y++) {
+      for (let x=1;x<dw-1;x++) {
+        const i = (y*dw+x)*4;
+        if (d[i+3]<8) continue;
+        for (let c=0;c<3;c++) {
+          const center = sd[i+c];
+          const neighbors = (sd[((y-1)*dw+x)*4+c] + sd[((y+1)*dw+x)*4+c] +
+                             sd[(y*dw+(x-1))*4+c] + sd[(y*dw+(x+1))*4+c]) / 4;
+          d[i+c] = Math.max(0, Math.min(255, center + (center - neighbors) * amt));
+        }
+      }
+    }
+  }
+
+  // palette
   let palette;
   if (paletteKey === 'custom') {
     palette = (customPalette && customPalette.length > 0)
@@ -860,7 +1232,7 @@ const processImage = (sourceCanvas, opts) => {
     palette = PALETTES[paletteKey].map(hexToRgb);
   }
 
-  // Step 4: dither + quantize
+  // dither + quantize
   const ds = ditherStrength / 100;
   if (dither === 'none') {
     for (let i=0;i<d.length;i+=4) {
@@ -884,9 +1256,7 @@ const processImage = (sourceCanvas, opts) => {
           const nx=x+dx, ny=y+dy;
           if (nx<0||nx>=dw||ny<0||ny>=dh) return;
           const ni = (ny*dw + nx)*3;
-          buf[ni] += errR*w;
-          buf[ni+1] += errG*w;
-          buf[ni+2] += errB*w;
+          buf[ni] += errR*w; buf[ni+1] += errG*w; buf[ni+2] += errB*w;
         };
         dist(1,0, 7/16); dist(-1,1, 3/16); dist(0,1, 5/16); dist(1,1, 1/16);
       }
@@ -898,7 +1268,6 @@ const processImage = (sourceCanvas, opts) => {
       d[i+2]=Math.max(0,Math.min(255,buf[j+2]));
     }
   } else if (dither === 'atkinson') {
-    // Atkinson - lighter dither, classic Mac
     const buf = new Float32Array(dw*dh*3);
     for (let i=0,j=0;i<d.length;i+=4,j+=3) {
       buf[j]=d[i]; buf[j+1]=d[i+1]; buf[j+2]=d[i+2];
@@ -946,11 +1315,15 @@ const processImage = (sourceCanvas, opts) => {
 
   sctx.putImageData(img, 0, 0);
 
-  // Step 5: outline
+  // outline
   if (outline) {
     const edge = sctx.getImageData(0,0,dw,dh);
     const ed = edge.data;
     const out = new Uint8ClampedArray(ed);
+    let outR, outG, outB;
+    if (outlineMode === 'custom') {
+      [outR, outG, outB] = hexToRgb(outlineColor);
+    }
     for (let y=1;y<dh-1;y++) {
       for (let x=1;x<dw-1;x++) {
         const i=(y*dw+x)*4;
@@ -965,9 +1338,17 @@ const processImage = (sourceCanvas, opts) => {
           if (cd > edgeThreshold * edgeThreshold * 50) { differ=true; break; }
         }
         if (differ) {
-          out[i] = Math.max(0, r-80);
-          out[i+1] = Math.max(0, g-80);
-          out[i+2] = Math.max(0, b-80);
+          if (outlineMode === 'darken') {
+            out[i] = Math.max(0, r-80);
+            out[i+1] = Math.max(0, g-80);
+            out[i+2] = Math.max(0, b-80);
+          } else if (outlineMode === 'lighten') {
+            out[i] = Math.min(255, r+80);
+            out[i+1] = Math.min(255, g+80);
+            out[i+2] = Math.min(255, b+80);
+          } else if (outlineMode === 'custom') {
+            out[i] = outR; out[i+1] = outG; out[i+2] = outB;
+          }
         }
       }
     }
@@ -975,60 +1356,146 @@ const processImage = (sourceCanvas, opts) => {
     sctx.putImageData(edge, 0, 0);
   }
 
-  // Step 6: seamless tiling
   let finalCanvas = small;
   if (seamless) {
     finalCanvas = makeSeamless(small, seamlessBlend);
   }
 
-  return { canvas: finalCanvas, dw, dh, palette };
+  // bloom (post-quantize, optional)
+  if (bloom) {
+    const fw = finalCanvas.width, fh = finalCanvas.height;
+    const fctx = finalCanvas.getContext('2d');
+    const fdat = fctx.getImageData(0,0,fw,fh);
+    const fd = fdat.data;
+    // extract bright pixels
+    const bright = document.createElement('canvas');
+    bright.width = fw; bright.height = fh;
+    const bctx = bright.getContext('2d');
+    const bd = bctx.createImageData(fw, fh);
+    for (let i=0;i<fd.length;i+=4) {
+      const lum = (0.299*fd[i] + 0.587*fd[i+1] + 0.114*fd[i+2]) / 255;
+      if (lum > bloomThreshold) {
+        const t = (lum - bloomThreshold) / (1 - bloomThreshold);
+        bd.data[i] = fd[i] * t;
+        bd.data[i+1] = fd[i+1] * t;
+        bd.data[i+2] = fd[i+2] * t;
+        bd.data[i+3] = 255;
+      } else {
+        bd.data[i] = 0; bd.data[i+1] = 0; bd.data[i+2] = 0; bd.data[i+3] = 255;
+      }
+    }
+    bctx.putImageData(bd, 0, 0);
+    const blurred = gaussianBlur(bright, 3);
+    fctx.globalCompositeOperation = 'screen';
+    fctx.globalAlpha = bloomStrength;
+    fctx.drawImage(blurred, 0, 0);
+    fctx.globalCompositeOperation = 'source-over';
+    fctx.globalAlpha = 1;
+  }
+
+  return { canvas: finalCanvas, dw: finalCanvas.width, dh: finalCanvas.height, palette };
 };
 
 // ============= APP =============
 function App() {
   const [image, setImage] = useState(null);
   const [imageInfo, setImageInfo] = useState(null);
+  // pixelization
   const [pixelSize, setPixelSize] = useState(8);
-  const [outputMode, setOutputMode] = useState('pixel'); // pixel | fixed
+  const [outputMode, setOutputMode] = useState('pixel');
   const [outputSize, setOutputSize] = useState(128);
+  const [preBlur, setPreBlur] = useState(0);
+  const [sharpen, setSharpen] = useState(0);
+  const [isTileable, setIsTileable] = useState(false);
+  // palette
   const [paletteKey, setPaletteKey] = useState('pico8');
   const [customPalette, setCustomPalette] = useState(['#1a1c2c','#5d275d','#b13e53','#ef7d57','#ffcd75']);
   const [newPalColor, setNewPalColor] = useState('#ff5277');
   const [autoColors, setAutoColors] = useState(8);
+  // dither
   const [dither, setDither] = useState('bayer4');
   const [ditherStrength, setDitherStrength] = useState(60);
+  // image adjust
   const [brightness, setBrightness] = useState(0);
   const [contrast, setContrast] = useState(10);
   const [saturation, setSaturation] = useState(15);
   const [hueShift, setHueShift] = useState(0);
   const [posterize, setPosterize] = useState(0);
+  const [colorJitter, setColorJitter] = useState(0);
+  // per-color
+  const [hueR, setHueR] = useState(0);
+  const [hueG, setHueG] = useState(0);
+  const [hueB, setHueB] = useState(0);
+  const [satR, setSatR] = useState(0);
+  const [satG, setSatG] = useState(0);
+  const [satB, setSatB] = useState(0);
+  // edges
   const [outline, setOutline] = useState(false);
+  const [outlineMode, setOutlineMode] = useState('darken');
+  const [outlineColor, setOutlineColor] = useState('#000000');
   const [edgeThreshold, setEdgeThreshold] = useState(20);
+  // tile
   const [seamless, setSeamless] = useState(false);
   const [seamlessBlend, setSeamlessBlend] = useState(20);
+  // bg
   const [removeBg, setRemoveBg] = useState(false);
   const [bgThreshold, setBgThreshold] = useState(15);
+  // bloom
+  const [bloom, setBloom] = useState(false);
+  const [bloomThreshold, setBloomThreshold] = useState(0.7);
+  const [bloomStrength, setBloomStrength] = useState(0.5);
+  // export
   const [exportScale, setExportScale] = useState(1);
+  // PBR
+  const [normalStrength, setNormalStrength] = useState(4);
+  const [normalInvert, setNormalInvert] = useState(false);
+  const [roughIntensity, setRoughIntensity] = useState(1.0);
+  const [roughInvert, setRoughInvert] = useState(false);
+  const [aoIntensity, setAoIntensity] = useState(1.0);
+  const [aoRadius, setAoRadius] = useState(4);
+  const [emissiveThreshold, setEmissiveThreshold] = useState(0.85);
+  // ui
   const [view, setView] = useState('after');
+  const [tab, setTab] = useState('basic');
   const [activePalette, setActivePalette] = useState([]);
   const [outputDims, setOutputDims] = useState(null);
   const [dragOver, setDragOver] = useState(false);
-  const [collapsed, setCollapsed] = useState({});
+  const [zoom, setZoom] = useState(1); // 1 = fit, 2/4/8 = manual zoom
+  const [showOriginal, setShowOriginal] = useState(false); // space-key peek
+  const [showGrid, setShowGrid] = useState(false);
 
   const sourceCanvasRef = useRef(document.createElement('canvas'));
   const outputCanvasRef = useRef(null);
   const beforeCanvasRef = useRef(null);
-  const tile1Ref = useRef(null);
-  const tile2Ref = useRef(null);
-  const tile3Ref = useRef(null);
-  const tile4Ref = useRef(null);
-  const tile5Ref = useRef(null);
-  const tile6Ref = useRef(null);
-  const tile7Ref = useRef(null);
-  const tile8Ref = useRef(null);
-  const tile9Ref = useRef(null);
+  const tileRefs = useRef(Array.from({length: 9}, () => React.createRef()));
   const normalCanvasRef = useRef(null);
+  const roughCanvasRef = useRef(null);
+  const aoCanvasRef = useRef(null);
+  const heightCanvasRef = useRef(null);
+  const emissiveCanvasRef = useRef(null);
+  const histogramRef = useRef(null);
   const fileInputRef = useRef(null);
+  const lastResultRef = useRef(null);
+
+  // Space-key to peek
+  useEffect(() => {
+    const onDown = (e) => {
+      if (e.code === 'Space' && !e.repeat && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        setShowOriginal(true);
+      }
+      if (e.code === 'KeyG' && document.activeElement.tagName !== 'INPUT') {
+        setShowGrid(g => !g);
+      }
+    };
+    const onUp = (e) => { if (e.code === 'Space') setShowOriginal(false); };
+    window.addEventListener('keydown', onDown);
+    window.addEventListener('keyup', onUp);
+    return () => {
+      window.removeEventListener('keydown', onDown);
+      window.removeEventListener('keyup', onUp);
+    };
+  }, []);
 
   const handleFile = (file) => {
     if (!file || !file.type.startsWith('image/')) return;
@@ -1054,20 +1521,25 @@ function App() {
     reader.readAsDataURL(file);
   };
 
-  // Reprocess on input change
+  // process
   useEffect(() => {
     if (!image) return;
     const handle = setTimeout(() => {
       const result = processImage(sourceCanvasRef.current, {
         pixelSize, paletteKey, customPalette, autoColors, dither, ditherStrength,
-        brightness, contrast, saturation, outline,
+        brightness, contrast, saturation, outline, outlineMode, outlineColor,
         hueShift, posterize, edgeThreshold,
         seamless, seamlessBlend, removeBg, bgThreshold,
-        outputSize, outputMode
+        outputSize, outputMode, preBlur, sharpen,
+        hueR, hueG, hueB, satR, satG, satB, colorJitter,
+        bloom, bloomThreshold, bloomStrength,
+        isTileable
       });
+      lastResultRef.current = result;
       setActivePalette(result.palette);
       setOutputDims({ w: result.canvas.width, h: result.canvas.height });
 
+      // Output canvas
       const out = outputCanvasRef.current;
       if (out) {
         out.width = result.canvas.width;
@@ -1078,6 +1550,7 @@ function App() {
         octx.drawImage(result.canvas, 0, 0);
       }
 
+      // Before
       const before = beforeCanvasRef.current;
       if (before) {
         before.width = sourceCanvasRef.current.width;
@@ -1085,9 +1558,8 @@ function App() {
         before.getContext('2d').drawImage(sourceCanvasRef.current, 0, 0);
       }
 
-      // 3x3 tile preview
-      const tileRefs = [tile1Ref, tile2Ref, tile3Ref, tile4Ref, tile5Ref, tile6Ref, tile7Ref, tile8Ref, tile9Ref];
-      for (const ref of tileRefs) {
+      // Tile previews
+      tileRefs.current.forEach(ref => {
         if (ref.current) {
           ref.current.width = result.canvas.width;
           ref.current.height = result.canvas.height;
@@ -1095,21 +1567,55 @@ function App() {
           ctx.imageSmoothingEnabled = false;
           ctx.drawImage(result.canvas, 0, 0);
         }
+      });
+
+      // PBR maps (only when needed for performance)
+      if (view === 'pbr' || view === 'normal') {
+        if (normalCanvasRef.current) {
+          const normal = generateNormalMap(result.canvas, normalStrength, normalInvert, seamless || isTileable);
+          normalCanvasRef.current.width = normal.width;
+          normalCanvasRef.current.height = normal.height;
+          normalCanvasRef.current.getContext('2d').drawImage(normal, 0, 0);
+        }
+        if (roughCanvasRef.current) {
+          const rough = generateRoughnessMap(result.canvas, roughIntensity, roughInvert);
+          roughCanvasRef.current.width = rough.width;
+          roughCanvasRef.current.height = rough.height;
+          roughCanvasRef.current.getContext('2d').drawImage(rough, 0, 0);
+        }
+        if (aoCanvasRef.current) {
+          const ao = generateAOMap(result.canvas, aoIntensity, aoRadius);
+          aoCanvasRef.current.width = ao.width;
+          aoCanvasRef.current.height = ao.height;
+          aoCanvasRef.current.getContext('2d').drawImage(ao, 0, 0);
+        }
+        if (heightCanvasRef.current) {
+          const ht = generateHeightMap(result.canvas);
+          heightCanvasRef.current.width = ht.width;
+          heightCanvasRef.current.height = ht.height;
+          heightCanvasRef.current.getContext('2d').drawImage(ht, 0, 0);
+        }
+        if (emissiveCanvasRef.current) {
+          const em = generateEmissiveMap(result.canvas, emissiveThreshold);
+          emissiveCanvasRef.current.width = em.width;
+          emissiveCanvasRef.current.height = em.height;
+          emissiveCanvasRef.current.getContext('2d').drawImage(em, 0, 0);
+        }
       }
 
-      // Normal map (only if seamless or square texture)
-      const nc = normalCanvasRef.current;
-      if (nc && view === 'normal') {
-        const normal = generateNormalMap(result.canvas, 4);
-        nc.width = normal.width;
-        nc.height = normal.height;
-        nc.getContext('2d').drawImage(normal, 0, 0);
+      // Histogram
+      if (histogramRef.current) {
+        drawHistogram(histogramRef.current, result.canvas);
       }
     }, 50);
     return () => clearTimeout(handle);
   }, [image, pixelSize, paletteKey, customPalette, autoColors, dither, ditherStrength,
-      brightness, contrast, saturation, outline, hueShift, posterize, edgeThreshold,
-      seamless, seamlessBlend, removeBg, bgThreshold, outputSize, outputMode, view]);
+      brightness, contrast, saturation, outline, outlineMode, outlineColor,
+      hueShift, posterize, edgeThreshold,
+      seamless, seamlessBlend, removeBg, bgThreshold, outputSize, outputMode,
+      preBlur, sharpen, hueR, hueG, hueB, satR, satG, satB, colorJitter,
+      bloom, bloomThreshold, bloomStrength, isTileable, view,
+      normalStrength, normalInvert, roughIntensity, roughInvert, aoIntensity, aoRadius, emissiveThreshold]);
 
   const downloadCanvas = (canvas, suffix) => {
     if (!canvas) return;
@@ -1120,39 +1626,58 @@ function App() {
     link.click();
   };
 
-  const downloadOutput = () => {
-    const out = outputCanvasRef.current;
-    if (!out) return;
+  const scaleAndDownload = (canvas, suffix) => {
     if (exportScale === 1) {
-      downloadCanvas(out, `${out.width}x${out.height}`);
+      downloadCanvas(canvas, `${suffix}_${canvas.width}x${canvas.height}`);
     } else {
       const big = document.createElement('canvas');
-      big.width = out.width * exportScale;
-      big.height = out.height * exportScale;
+      big.width = canvas.width * exportScale;
+      big.height = canvas.height * exportScale;
       const bctx = big.getContext('2d');
       bctx.imageSmoothingEnabled = false;
-      bctx.drawImage(out, 0, 0, big.width, big.height);
-      downloadCanvas(big, `${big.width}x${big.height}`);
+      bctx.drawImage(canvas, 0, 0, big.width, big.height);
+      downloadCanvas(big, `${suffix}_${big.width}x${big.height}`);
     }
   };
 
+  const downloadOutput = () => scaleAndDownload(outputCanvasRef.current, 'color');
   const downloadNormal = () => {
     const out = outputCanvasRef.current;
     if (!out) return;
-    const normal = generateNormalMap(out, 4);
-    if (exportScale === 1) {
-      downloadCanvas(normal, `normal_${normal.width}x${normal.height}`);
-    } else {
-      const big = document.createElement('canvas');
-      big.width = normal.width * exportScale;
-      big.height = normal.height * exportScale;
-      const bctx = big.getContext('2d');
-      bctx.imageSmoothingEnabled = false;
-      bctx.drawImage(normal, 0, 0, big.width, big.height);
-      downloadCanvas(big, `normal_${big.width}x${big.height}`);
-    }
+    const normal = generateNormalMap(out, normalStrength, normalInvert, seamless || isTileable);
+    scaleAndDownload(normal, 'normal');
   };
-
+  const downloadRoughness = () => {
+    const out = outputCanvasRef.current;
+    if (!out) return;
+    const rough = generateRoughnessMap(out, roughIntensity, roughInvert);
+    scaleAndDownload(rough, 'roughness');
+  };
+  const downloadAO = () => {
+    const out = outputCanvasRef.current;
+    if (!out) return;
+    const ao = generateAOMap(out, aoIntensity, aoRadius);
+    scaleAndDownload(ao, 'ao');
+  };
+  const downloadHeight = () => {
+    const out = outputCanvasRef.current;
+    if (!out) return;
+    const ht = generateHeightMap(out);
+    scaleAndDownload(ht, 'height');
+  };
+  const downloadEmissive = () => {
+    const out = outputCanvasRef.current;
+    if (!out) return;
+    const em = generateEmissiveMap(out, emissiveThreshold);
+    scaleAndDownload(em, 'emissive');
+  };
+  const downloadAllPBR = () => {
+    downloadOutput();
+    setTimeout(downloadNormal, 200);
+    setTimeout(downloadRoughness, 400);
+    setTimeout(downloadAO, 600);
+    setTimeout(downloadHeight, 800);
+  };
   const downloadTiled = () => {
     const out = outputCanvasRef.current;
     if (!out) return;
@@ -1161,9 +1686,7 @@ function App() {
     tiled.height = out.height * 3;
     const tctx = tiled.getContext('2d');
     tctx.imageSmoothingEnabled = false;
-    for (let y=0;y<3;y++) for (let x=0;x<3;x++) {
-      tctx.drawImage(out, x*out.width, y*out.height);
-    }
+    for (let y=0;y<3;y++) for (let x=0;x<3;x++) tctx.drawImage(out, x*out.width, y*out.height);
     downloadCanvas(tiled, `tiled3x3_${tiled.width}x${tiled.height}`);
   };
 
@@ -1196,6 +1719,30 @@ function App() {
     link.click();
   };
 
+  const generateRandomPalette = () => {
+    // Generate aesthetically pleasing random palette using HSL
+    const baseHue = Math.random();
+    const scheme = Math.random() < 0.5 ? 'analogous' : 'complementary';
+    const colors = [];
+    const numColors = 8;
+    for (let i=0;i<numColors;i++) {
+      let h, s, l;
+      if (scheme === 'analogous') {
+        h = (baseHue + (i / numColors) * 0.3) % 1;
+        s = 0.4 + (i / numColors) * 0.4;
+        l = 0.15 + (i / numColors) * 0.7;
+      } else {
+        h = (baseHue + (i % 2 === 0 ? 0 : 0.5) + (i / numColors) * 0.15) % 1;
+        s = 0.5 + Math.random() * 0.4;
+        l = 0.15 + (i / numColors) * 0.7;
+      }
+      const [r,g,b] = hslToRgb(h, s, l);
+      colors.push(rgbToHex(r,g,b));
+    }
+    setCustomPalette(colors);
+    setPaletteKey('custom');
+  };
+
   const applyPreset = (key) => {
     const p = PRESETS[key];
     const s = p.settings;
@@ -1216,11 +1763,18 @@ function App() {
     setPixelSize(8); setPaletteKey('pico8'); setAutoColors(8);
     setDither('bayer4'); setDitherStrength(60);
     setBrightness(0); setContrast(10); setSaturation(15);
-    setHueShift(0); setPosterize(0);
-    setOutline(false); setEdgeThreshold(20);
+    setHueShift(0); setPosterize(0); setColorJitter(0);
+    setHueR(0); setHueG(0); setHueB(0); setSatR(0); setSatG(0); setSatB(0);
+    setOutline(false); setOutlineMode('darken'); setEdgeThreshold(20);
     setSeamless(false); setSeamlessBlend(20);
     setRemoveBg(false); setBgThreshold(15);
+    setBloom(false); setBloomThreshold(0.7); setBloomStrength(0.5);
     setOutputMode('pixel'); setOutputSize(128); setExportScale(1);
+    setPreBlur(0); setSharpen(0); setIsTileable(false);
+    setNormalStrength(4); setNormalInvert(false);
+    setRoughIntensity(1.0); setRoughInvert(false);
+    setAoIntensity(1.0); setAoRadius(4);
+    setEmissiveThreshold(0.85);
   };
 
   const onDrop = (e) => {
@@ -1228,14 +1782,8 @@ function App() {
     handleFile(e.dataTransfer.files[0]);
   };
 
-  const togglePanel = (k) => setCollapsed({ ...collapsed, [k]: !collapsed[k] });
-
-  const addCustomColor = () => {
-    setCustomPalette([...customPalette, newPalColor]);
-  };
-  const removeCustomColor = (i) => {
-    setCustomPalette(customPalette.filter((_,idx)=>idx!==i));
-  };
+  const addCustomColor = () => setCustomPalette([...customPalette, newPalColor]);
+  const removeCustomColor = (i) => setCustomPalette(customPalette.filter((_,idx)=>idx!==i));
 
   const handlePaletteFile = (e) => {
     const file = e.target.files[0];
@@ -1253,269 +1801,489 @@ function App() {
     reader.readAsText(file);
   };
 
-  const Section = ({ id, label, color, children }) => (
-    <div className="panel">
-      <div
-        className={`panel-head ${color || ''} ${collapsed[id] ? 'collapsed' : ''}`}
-        onClick={() => togglePanel(id)}
-      >
-        <span className="label">{label}</span>
-        <span className="chev">▼</span>
-      </div>
-      <div className={`panel-body ${collapsed[id] ? 'collapsed' : ''}`}>{children}</div>
-    </div>
-  );
-
+  // RENDER ===========================================
   return (
-    <div className="wrap">
+    <div className="app-shell">
       <header>
-        <div>
-          <div className="title"><span className="px">PIXEL</span>FORGE<span className="v">v2 // texture edition</span></div>
-          <div className="subtitle">// stylize · tile · normal map · export</div>
+        <div style={{display:'flex',alignItems:'baseline',flexWrap:'wrap'}}>
+          <div className="title"><span className="px">PIXEL</span>FORGE<span className="v">v3 // pro</span></div>
+          <div className="subtitle">// stylize · PBR · tile · grade · export</div>
         </div>
-        <div className="badge">BLENDER READY</div>
+        <div className="header-actions">
+          <button className="btn small" style={{width:'auto'}} onClick={() => fileInputRef.current.click()}>
+            {image ? '↻ Replace' : '↑ Load Image'}
+          </button>
+          <input ref={fileInputRef} type="file" accept="image/*" style={{display:'none'}} onChange={(e) => handleFile(e.target.files[0])} />
+          <span className="badge">BLENDER PBR READY</span>
+        </div>
       </header>
 
-      <div className="layout">
-        <div className="controls-col">
+      <div className="main">
+        {/* SIDEBAR */}
+        <div className="sidebar">
+          <div className="tabs">
+            {[
+              ['basic', '◆ Basic'],
+              ['palette', '◈ Palette'],
+              ['grade', '≋ Grade'],
+              ['effects', '✦ Effects'],
+              ['pbr', '◤ PBR'],
+              ['export', '▼ Export'],
+            ].map(([k,l]) => (
+              <button key={k} className={`tab ${tab === k ? 'active' : ''}`} onClick={() => setTab(k)}>{l}</button>
+            ))}
+          </div>
 
-          <Section id="src" label="▣ Source">
-            <button className="btn primary" onClick={() => fileInputRef.current.click()}>
-              {image ? 'Replace Image' : 'Load Image'}
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              onChange={(e) => handleFile(e.target.files[0])}
-            />
-            {imageInfo && (
-              <div style={{ marginTop: 10, fontFamily: 'VT323, monospace', fontSize: 15, color: 'var(--dim)' }}>
-                ◆ source: {imageInfo.w} × {imageInfo.h}
-                {outputDims && <><br/>◆ output: <span style={{color:'var(--accent-2)'}}>{outputDims.w} × {outputDims.h}</span></>}
-              </div>
-            )}
-          </Section>
-
-          <Section id="presets" label="◇ Style Presets" color="alt3">
-            <div className="presets">
-              {Object.entries(PRESETS).map(([k,p]) => (
-                <button key={k} className="preset-btn" onClick={() => applyPreset(k)}>
-                  <div className="pname">{p.name}</div>
-                  <div>{p.desc}</div>
-                </button>
-              ))}
-            </div>
-          </Section>
-
-          <Section id="res" label="▤ Resolution" color="alt">
-            <div className="control">
-              <label style={{marginBottom: 8}}>Output mode</label>
-              <div className="btn-row">
-                <button className={`btn small ${outputMode === 'pixel' ? 'primary' : ''}`} onClick={() => setOutputMode('pixel')}>By pixel size</button>
-                <button className={`btn small ${outputMode === 'fixed' ? 'primary' : ''}`} onClick={() => setOutputMode('fixed')}>Fixed size</button>
-              </div>
-            </div>
-            {outputMode === 'pixel' ? (
-              <div className="control">
-                <label>Pixel size <span className="val">{pixelSize}px</span></label>
-                <input type="range" min="2" max="32" value={pixelSize} onChange={(e) => setPixelSize(+e.target.value)} />
-              </div>
-            ) : (
-              <div className="control">
-                <label>Output width <span className="val">{outputSize}px</span></label>
-                <select value={outputSize} onChange={(e) => setOutputSize(+e.target.value)}>
-                  <option value="32">32 (POT)</option>
-                  <option value="64">64 (POT)</option>
-                  <option value="128">128 (POT)</option>
-                  <option value="256">256 (POT)</option>
-                  <option value="512">512 (POT)</option>
-                  <option value="1024">1024 (POT)</option>
-                </select>
-                <div style={{fontFamily:'VT323,monospace',fontSize:13,color:'var(--dim)',marginTop:6}}>
-                  power-of-two for GPU mipmapping
-                </div>
-              </div>
-            )}
-          </Section>
-
-          <Section id="pal" label="◈ Palette" color="alt2">
-            <div className="control">
-              <select value={paletteKey} onChange={(e) => setPaletteKey(e.target.value)}>
-                {Object.keys(PALETTE_LABELS).map(k => (
-                  <option key={k} value={k}>{PALETTE_LABELS[k]}</option>
-                ))}
-              </select>
-            </div>
-            {paletteKey === 'auto' && (
-              <div className="control">
-                <label>Colors <span className="val">{autoColors}</span></label>
-                <input type="range" min="2" max="32" value={autoColors} onChange={(e) => setAutoColors(+e.target.value)} />
-              </div>
-            )}
-            {paletteKey === 'custom' && (
-              <div className="pal-editor">
-                <div className="pal-editor-row">
-                  {customPalette.map((c,i) => (
-                    <div key={i} className="pal-color" style={{background:c}} title={c}>
-                      <span className="x" onClick={() => removeCustomColor(i)}>×</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="pal-add">
-                  <input type="color" value={newPalColor} onChange={(e) => setNewPalColor(e.target.value)} />
-                  <button onClick={addCustomColor}>+ Add</button>
-                  <label className="btn small" style={{padding: '4px 8px', cursor: 'pointer', flex: 1, textAlign: 'center'}}>
-                    Load .hex/.txt
-                    <input type="file" accept=".hex,.txt,.gpl,.pal" style={{display:'none'}} onChange={handlePaletteFile} />
-                  </label>
-                </div>
-              </div>
-            )}
-            {activePalette.length > 0 && (
-              <div className="palette-preview">
-                {activePalette.map((c,i) => (
-                  <div key={i} className="swatch" style={{ background: `rgb(${c[0]},${c[1]},${c[2]})` }} title={`rgb(${c[0]},${c[1]},${c[2]})`} />
-                ))}
-              </div>
-            )}
-            <div className="btn-row" style={{marginTop: 8}}>
-              <button className="btn small" onClick={downloadPaletteSwatch} disabled={!activePalette.length}>PNG Swatch</button>
-              <button className="btn small" onClick={exportPaletteHex} disabled={!activePalette.length}>Export .hex</button>
-            </div>
-          </Section>
-
-          <Section id="dither" label="◌ Dither">
-            <div className="control">
-              <select value={dither} onChange={(e) => setDither(e.target.value)}>
-                <option value="none">NONE (CLEAN)</option>
-                <option value="fs">FLOYD-STEINBERG</option>
-                <option value="atkinson">ATKINSON (LIGHT)</option>
-                <option value="bayer4">BAYER 4×4</option>
-                <option value="bayer8">BAYER 8×8</option>
-              </select>
-            </div>
-            {dither !== 'none' && (
-              <div className="control">
-                <label>Strength <span className="val">{ditherStrength}%</span></label>
-                <input type="range" min="0" max="200" value={ditherStrength} onChange={(e) => setDitherStrength(+e.target.value)} />
-              </div>
-            )}
-          </Section>
-
-          <Section id="adj" label="≋ Image Adjust" color="alt">
-            <div className="control">
-              <label>Brightness <span className="val">{brightness}</span></label>
-              <input type="range" min="-100" max="100" value={brightness} onChange={(e) => setBrightness(+e.target.value)} />
-            </div>
-            <div className="control">
-              <label>Contrast <span className="val">{contrast}</span></label>
-              <input type="range" min="-100" max="100" value={contrast} onChange={(e) => setContrast(+e.target.value)} />
-            </div>
-            <div className="control">
-              <label>Saturation <span className="val">{saturation}</span></label>
-              <input type="range" min="-100" max="100" value={saturation} onChange={(e) => setSaturation(+e.target.value)} />
-            </div>
-            <div className="control">
-              <label>Hue shift <span className="val">{hueShift}°</span></label>
-              <input type="range" min="-180" max="180" value={hueShift} onChange={(e) => setHueShift(+e.target.value)} />
-            </div>
-            <div className="control">
-              <label>Posterize <span className="val">{posterize === 0 ? 'off' : posterize}</span></label>
-              <input type="range" min="0" max="16" value={posterize} onChange={(e) => setPosterize(+e.target.value)} />
-              <div style={{fontFamily:'VT323,monospace',fontSize:13,color:'var(--dim)',marginTop:4}}>
-                pre-quantize for stronger flat areas
-              </div>
-            </div>
-          </Section>
-
-          <Section id="edge" label="◤ Edges & Outline" color="alt2">
-            <div className="control">
-              <label className="checkbox-row">
-                <input type="checkbox" checked={outline} onChange={(e) => setOutline(e.target.checked)} />
-                <span className="checkbox-box"></span>
-                <span>Outline edges</span>
-              </label>
-            </div>
-            {outline && (
-              <div className="control">
-                <label>Edge threshold <span className="val">{edgeThreshold}</span></label>
-                <input type="range" min="1" max="100" value={edgeThreshold} onChange={(e) => setEdgeThreshold(+e.target.value)} />
-              </div>
-            )}
-          </Section>
-
-          <Section id="bg" label="◐ Background" color="alt3">
-            <div className="control">
-              <label className="checkbox-row">
-                <input type="checkbox" checked={removeBg} onChange={(e) => setRemoveBg(e.target.checked)} />
-                <span className="checkbox-box"></span>
-                <span>Remove background</span>
-              </label>
-            </div>
-            {removeBg && (
+          <div className="tab-content">
+            {/* BASIC TAB */}
+            {tab === 'basic' && (
               <>
-                <div className="control">
-                  <label>Threshold <span className="val">{bgThreshold}</span></label>
-                  <input type="range" min="1" max="80" value={bgThreshold} onChange={(e) => setBgThreshold(+e.target.value)} />
+                <div className="section">
+                  <div className="section-label alt2">◇ Style Presets</div>
+                  <div className="presets">
+                    {Object.entries(PRESETS).map(([k,p]) => (
+                      <button key={k} className="preset-btn" onClick={() => applyPreset(k)}>
+                        <div className="pname">{p.name}</div>
+                        <div>{p.desc}</div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div style={{fontFamily:'VT323,monospace',fontSize:13,color:'var(--dim)'}}>
-                  samples corner colors, removes similar pixels
+
+                <div className="section">
+                  <div className="section-label alt">▤ Resolution</div>
+                  <div className="control">
+                    <label style={{marginBottom:6}}>Output mode</label>
+                    <div className="btn-row">
+                      <button className={`btn small ${outputMode === 'pixel' ? 'primary' : ''}`} onClick={() => setOutputMode('pixel')}>By pixel size</button>
+                      <button className={`btn small ${outputMode === 'fixed' ? 'primary' : ''}`} onClick={() => setOutputMode('fixed')}>Fixed size</button>
+                    </div>
+                  </div>
+                  {outputMode === 'pixel' ? (
+                    <div className="control">
+                      <label>Pixel size <span className="val">{pixelSize}px</span></label>
+                      <input type="range" min="2" max="32" value={pixelSize} onChange={(e) => setPixelSize(+e.target.value)} />
+                    </div>
+                  ) : (
+                    <div className="control">
+                      <label>Output width <span className="val">{outputSize}px</span></label>
+                      <select value={outputSize} onChange={(e) => setOutputSize(+e.target.value)}>
+                        <option value="32">32 (POT)</option>
+                        <option value="64">64 (POT)</option>
+                        <option value="128">128 (POT)</option>
+                        <option value="256">256 (POT)</option>
+                        <option value="512">512 (POT)</option>
+                        <option value="1024">1024 (POT)</option>
+                      </select>
+                      <div className="hint">power-of-two for GPU mipmapping</div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="section">
+                  <div className="section-label">◌ Dither</div>
+                  <div className="control">
+                    <select value={dither} onChange={(e) => setDither(e.target.value)}>
+                      <option value="none">NONE (CLEAN)</option>
+                      <option value="fs">FLOYD-STEINBERG</option>
+                      <option value="atkinson">ATKINSON (LIGHT)</option>
+                      <option value="bayer4">BAYER 4×4</option>
+                      <option value="bayer8">BAYER 8×8</option>
+                    </select>
+                  </div>
+                  {dither !== 'none' && (
+                    <div className="control">
+                      <label>Strength <span className="val">{ditherStrength}%</span></label>
+                      <input type="range" min="0" max="200" value={ditherStrength} onChange={(e) => setDitherStrength(+e.target.value)} />
+                    </div>
+                  )}
+                </div>
+
+                <div className="section">
+                  <div className="section-label alt4">◯ Pre-Process</div>
+                  <div className="control">
+                    <label>Pre-blur <span className="val">{preBlur === 0 ? 'off' : preBlur+'px'}</span></label>
+                    <input type="range" min="0" max="8" value={preBlur} onChange={(e) => setPreBlur(+e.target.value)} />
+                    <div className="hint">smooths noise → cleaner palette mapping</div>
+                  </div>
+                  <div className="control">
+                    <label>Sharpen <span className="val">{sharpen}%</span></label>
+                    <input type="range" min="0" max="100" value={sharpen} onChange={(e) => setSharpen(+e.target.value)} />
+                    <div className="hint">unsharp mask post-quantize</div>
+                  </div>
+                </div>
+
+                <div className="section">
+                  <div className="section-label alt">▦ Tileability</div>
+                  <div className="control">
+                    <label className="checkbox-row">
+                      <input type="checkbox" checked={isTileable} onChange={(e) => setIsTileable(e.target.checked)} />
+                      <span className="checkbox-box"></span>
+                      <span>Source already tiles</span>
+                    </label>
+                    <div className="hint">enables wrap-aware downscaling</div>
+                  </div>
+                  <div className="control">
+                    <label className="checkbox-row">
+                      <input type="checkbox" checked={seamless} onChange={(e) => setSeamless(e.target.checked)} />
+                      <span className="checkbox-box"></span>
+                      <span>Make seamless</span>
+                    </label>
+                  </div>
+                  {seamless && (
+                    <div className="control">
+                      <label>Blend zone <span className="val">{seamlessBlend}px</span></label>
+                      <input type="range" min="2" max="50" value={seamlessBlend} onChange={(e) => setSeamlessBlend(+e.target.value)} />
+                    </div>
+                  )}
                 </div>
               </>
             )}
-          </Section>
 
-          <Section id="tile" label="▦ Seamless Tiling" color="alt">
-            <div className="info-tag">FOR REPEATING TEXTURES</div>
-            <div className="control">
-              <label className="checkbox-row">
-                <input type="checkbox" checked={seamless} onChange={(e) => setSeamless(e.target.checked)} />
-                <span className="checkbox-box"></span>
-                <span>Make seamless</span>
-              </label>
-            </div>
-            {seamless && (
-              <div className="control">
-                <label>Blend zone <span className="val">{seamlessBlend}px</span></label>
-                <input type="range" min="2" max="50" value={seamlessBlend} onChange={(e) => setSeamlessBlend(+e.target.value)} />
-                <div style={{fontFamily:'VT323,monospace',fontSize:13,color:'var(--dim)',marginTop:4}}>
-                  shifts and blends seams — works best on textures, not characters
+            {/* PALETTE TAB */}
+            {tab === 'palette' && (
+              <>
+                <div className="section">
+                  <div className="section-label alt2">◈ Palette</div>
+                  <div className="control">
+                    <select value={paletteKey} onChange={(e) => setPaletteKey(e.target.value)}>
+                      {Object.keys(PALETTE_LABELS).map(k => (
+                        <option key={k} value={k}>{PALETTE_LABELS[k]}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {paletteKey === 'auto' && (
+                    <div className="control">
+                      <label>Colors <span className="val">{autoColors}</span></label>
+                      <input type="range" min="2" max="32" value={autoColors} onChange={(e) => setAutoColors(+e.target.value)} />
+                    </div>
+                  )}
+                  {paletteKey === 'custom' && (
+                    <div className="pal-editor">
+                      <div className="pal-editor-row">
+                        {customPalette.map((c,i) => (
+                          <div key={i} className="pal-color" style={{background:c}} title={c}>
+                            <span className="x" onClick={() => removeCustomColor(i)}>×</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="pal-add">
+                        <input type="color" value={newPalColor} onChange={(e) => setNewPalColor(e.target.value)} />
+                        <button onClick={addCustomColor}>+ Add</button>
+                      </div>
+                      <div className="pal-add">
+                        <label className="btn small" style={{padding: '4px 6px', cursor: 'pointer', flex: 1, textAlign: 'center', margin:0}}>
+                          Load .hex/.txt
+                          <input type="file" accept=".hex,.txt,.gpl,.pal" style={{display:'none'}} onChange={handlePaletteFile} />
+                        </label>
+                        <button className="btn small" style={{flex:1, padding: '4px 6px'}} onClick={generateRandomPalette}>🎲 Random</button>
+                      </div>
+                    </div>
+                  )}
+                  {activePalette.length > 0 && (
+                    <div className="palette-preview">
+                      {activePalette.map((c,i) => (
+                        <div key={i} className="swatch" style={{ background: `rgb(${c[0]},${c[1]},${c[2]})` }} title={`rgb(${c[0]},${c[1]},${c[2]})`} />
+                      ))}
+                    </div>
+                  )}
+                  <div className="btn-row" style={{marginTop:8}}>
+                    <button className="btn small" onClick={downloadPaletteSwatch} disabled={!activePalette.length}>PNG Swatch</button>
+                    <button className="btn small" onClick={exportPaletteHex} disabled={!activePalette.length}>.hex File</button>
+                  </div>
                 </div>
-              </div>
+              </>
             )}
-          </Section>
 
-          <Section id="export" label="▼ Export">
-            <div className="control">
-              <label>Export scale <span className="val">×{exportScale}</span></label>
-              <select value={exportScale} onChange={(e) => setExportScale(+e.target.value)}>
-                <option value="1">×1 (native)</option>
-                <option value="2">×2</option>
-                <option value="4">×4</option>
-                <option value="8">×8</option>
-                <option value="16">×16</option>
-              </select>
-            </div>
-            <button className="btn primary" onClick={downloadOutput} disabled={!image} style={{marginBottom: 6}}>↓ Color Texture</button>
-            <button className="btn" onClick={downloadNormal} disabled={!image} style={{marginBottom: 6}}>↓ Normal Map</button>
-            <button className="btn" onClick={downloadTiled} disabled={!image} style={{marginBottom: 6}}>↓ 3×3 Tiled</button>
-            <button className="btn" onClick={reset}>↺ Reset Settings</button>
-          </Section>
+            {/* GRADE TAB */}
+            {tab === 'grade' && (
+              <>
+                <div className="section">
+                  <div className="section-label">≋ Tone</div>
+                  <div className="control">
+                    <label>Brightness <span className="val">{brightness}</span></label>
+                    <input type="range" min="-100" max="100" value={brightness} onChange={(e) => setBrightness(+e.target.value)} />
+                  </div>
+                  <div className="control">
+                    <label>Contrast <span className="val">{contrast}</span></label>
+                    <input type="range" min="-100" max="100" value={contrast} onChange={(e) => setContrast(+e.target.value)} />
+                  </div>
+                  <div className="control">
+                    <label>Saturation <span className="val">{saturation}</span></label>
+                    <input type="range" min="-100" max="100" value={saturation} onChange={(e) => setSaturation(+e.target.value)} />
+                  </div>
+                </div>
+
+                <div className="section">
+                  <div className="section-label alt">◐ Color</div>
+                  <div className="control">
+                    <label>Hue shift (all) <span className="val">{hueShift}°</span></label>
+                    <input type="range" min="-180" max="180" value={hueShift} onChange={(e) => setHueShift(+e.target.value)} />
+                  </div>
+                  <div className="control">
+                    <label>Posterize <span className="val">{posterize === 0 ? 'off' : posterize}</span></label>
+                    <input type="range" min="0" max="16" value={posterize} onChange={(e) => setPosterize(+e.target.value)} />
+                    <div className="hint">stronger flat regions before quantize</div>
+                  </div>
+                  <div className="control">
+                    <label>Color jitter <span className="val">{colorJitter}</span></label>
+                    <input type="range" min="0" max="40" value={colorJitter} onChange={(e) => setColorJitter(+e.target.value)} />
+                    <div className="hint">organic variation in flat areas</div>
+                  </div>
+                </div>
+
+                <div className="section">
+                  <div className="section-label alt2">⌖ Per-Hue Grading</div>
+                  <div className="info-tag alt">target reds, greens, blues separately</div>
+                  <div className="control">
+                    <label>Red hue <span className="val">{hueR}°</span></label>
+                    <input type="range" min="-60" max="60" value={hueR} onChange={(e) => setHueR(+e.target.value)} />
+                  </div>
+                  <div className="control">
+                    <label>Red sat <span className="val">{satR}</span></label>
+                    <input type="range" min="-100" max="100" value={satR} onChange={(e) => setSatR(+e.target.value)} />
+                  </div>
+                  <div className="control">
+                    <label>Green hue <span className="val">{hueG}°</span></label>
+                    <input type="range" min="-60" max="60" value={hueG} onChange={(e) => setHueG(+e.target.value)} />
+                  </div>
+                  <div className="control">
+                    <label>Green sat <span className="val">{satG}</span></label>
+                    <input type="range" min="-100" max="100" value={satG} onChange={(e) => setSatG(+e.target.value)} />
+                  </div>
+                  <div className="control">
+                    <label>Blue hue <span className="val">{hueB}°</span></label>
+                    <input type="range" min="-60" max="60" value={hueB} onChange={(e) => setHueB(+e.target.value)} />
+                  </div>
+                  <div className="control">
+                    <label>Blue sat <span className="val">{satB}</span></label>
+                    <input type="range" min="-100" max="100" value={satB} onChange={(e) => setSatB(+e.target.value)} />
+                  </div>
+                </div>
+
+                <div className="section">
+                  <div className="section-label alt3">⊞ Histogram</div>
+                  <canvas ref={histogramRef} className="histogram" />
+                  <div className="hint">distribution of red / green / blue values</div>
+                </div>
+              </>
+            )}
+
+            {/* EFFECTS TAB */}
+            {tab === 'effects' && (
+              <>
+                <div className="section">
+                  <div className="section-label alt2">◤ Outline</div>
+                  <div className="control">
+                    <label className="checkbox-row">
+                      <input type="checkbox" checked={outline} onChange={(e) => setOutline(e.target.checked)} />
+                      <span className="checkbox-box"></span>
+                      <span>Outline edges</span>
+                    </label>
+                  </div>
+                  {outline && (
+                    <>
+                      <div className="control">
+                        <label>Style</label>
+                        <select value={outlineMode} onChange={(e) => setOutlineMode(e.target.value)}>
+                          <option value="darken">DARKEN</option>
+                          <option value="lighten">LIGHTEN</option>
+                          <option value="custom">CUSTOM COLOR</option>
+                        </select>
+                      </div>
+                      {outlineMode === 'custom' && (
+                        <div className="control">
+                          <label>Outline color</label>
+                          <input type="color" value={outlineColor} onChange={(e) => setOutlineColor(e.target.value)} style={{height:30}} />
+                        </div>
+                      )}
+                      <div className="control">
+                        <label>Edge threshold <span className="val">{edgeThreshold}</span></label>
+                        <input type="range" min="1" max="100" value={edgeThreshold} onChange={(e) => setEdgeThreshold(+e.target.value)} />
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <div className="section">
+                  <div className="section-label alt3">✦ Bloom / Glow</div>
+                  <div className="info-tag alt2">brightens highlights, magic for stylized art</div>
+                  <div className="control">
+                    <label className="checkbox-row">
+                      <input type="checkbox" checked={bloom} onChange={(e) => setBloom(e.target.checked)} />
+                      <span className="checkbox-box"></span>
+                      <span>Enable bloom</span>
+                    </label>
+                  </div>
+                  {bloom && (
+                    <>
+                      <div className="control">
+                        <label>Threshold <span className="val">{bloomThreshold.toFixed(2)}</span></label>
+                        <input type="range" min="0" max="1" step="0.05" value={bloomThreshold} onChange={(e) => setBloomThreshold(+e.target.value)} />
+                      </div>
+                      <div className="control">
+                        <label>Strength <span className="val">{bloomStrength.toFixed(2)}</span></label>
+                        <input type="range" min="0" max="1" step="0.05" value={bloomStrength} onChange={(e) => setBloomStrength(+e.target.value)} />
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <div className="section">
+                  <div className="section-label alt">◐ Background</div>
+                  <div className="control">
+                    <label className="checkbox-row">
+                      <input type="checkbox" checked={removeBg} onChange={(e) => setRemoveBg(e.target.checked)} />
+                      <span className="checkbox-box"></span>
+                      <span>Remove background</span>
+                    </label>
+                  </div>
+                  {removeBg && (
+                    <>
+                      <div className="control">
+                        <label>Threshold <span className="val">{bgThreshold}</span></label>
+                        <input type="range" min="1" max="80" value={bgThreshold} onChange={(e) => setBgThreshold(+e.target.value)} />
+                      </div>
+                      <div className="hint">samples corner colors, removes similar pixels</div>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* PBR TAB */}
+            {tab === 'pbr' && (
+              <>
+                <div className="info-tag alt2" style={{marginBottom:12}}>full PBR map generation for blender</div>
+
+                <div className="section">
+                  <div className="section-label alt4">◤ Normal Map</div>
+                  <div className="control">
+                    <label>Strength <span className="val">{normalStrength.toFixed(1)}</span></label>
+                    <input type="range" min="0.5" max="10" step="0.5" value={normalStrength} onChange={(e) => setNormalStrength(+e.target.value)} />
+                  </div>
+                  <div className="control">
+                    <label className="checkbox-row">
+                      <input type="checkbox" checked={normalInvert} onChange={(e) => setNormalInvert(e.target.checked)} />
+                      <span className="checkbox-box"></span>
+                      <span>Invert (DirectX style)</span>
+                    </label>
+                    <div className="hint">unchecked = OpenGL/Blender, checked = DirectX/Unity</div>
+                  </div>
+                </div>
+
+                <div className="section">
+                  <div className="section-label alt4">⊟ Roughness</div>
+                  <div className="control">
+                    <label>Intensity <span className="val">{roughIntensity.toFixed(2)}</span></label>
+                    <input type="range" min="0" max="2" step="0.1" value={roughIntensity} onChange={(e) => setRoughIntensity(+e.target.value)} />
+                  </div>
+                  <div className="control">
+                    <label className="checkbox-row">
+                      <input type="checkbox" checked={roughInvert} onChange={(e) => setRoughInvert(e.target.checked)} />
+                      <span className="checkbox-box"></span>
+                      <span>Invert</span>
+                    </label>
+                    <div className="hint">white = rough, black = smooth (or invert)</div>
+                  </div>
+                </div>
+
+                <div className="section">
+                  <div className="section-label alt4">◴ Ambient Occlusion</div>
+                  <div className="control">
+                    <label>Intensity <span className="val">{aoIntensity.toFixed(2)}</span></label>
+                    <input type="range" min="0" max="2" step="0.1" value={aoIntensity} onChange={(e) => setAoIntensity(+e.target.value)} />
+                  </div>
+                  <div className="control">
+                    <label>Radius <span className="val">{aoRadius}px</span></label>
+                    <input type="range" min="2" max="16" value={aoRadius} onChange={(e) => setAoRadius(+e.target.value)} />
+                  </div>
+                </div>
+
+                <div className="section">
+                  <div className="section-label alt4">✦ Emissive</div>
+                  <div className="control">
+                    <label>Threshold <span className="val">{emissiveThreshold.toFixed(2)}</span></label>
+                    <input type="range" min="0" max="1" step="0.05" value={emissiveThreshold} onChange={(e) => setEmissiveThreshold(+e.target.value)} />
+                    <div className="hint">brightness above which pixels glow</div>
+                  </div>
+                </div>
+
+                <div style={{marginTop:16}}>
+                  <button className="btn primary" onClick={() => setView('pbr')}>📊 View PBR Maps</button>
+                </div>
+              </>
+            )}
+
+            {/* EXPORT TAB */}
+            {tab === 'export' && (
+              <>
+                <div className="section">
+                  <div className="section-label">⚙ Export Settings</div>
+                  <div className="control">
+                    <label>Export scale <span className="val">×{exportScale}</span></label>
+                    <select value={exportScale} onChange={(e) => setExportScale(+e.target.value)}>
+                      <option value="1">×1 (native pixels)</option>
+                      <option value="2">×2</option>
+                      <option value="4">×4</option>
+                      <option value="8">×8</option>
+                      <option value="16">×16</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="section">
+                  <div className="section-label">⬇ Color / Diffuse</div>
+                  <button className="btn primary" onClick={downloadOutput} disabled={!image}>↓ Color Texture</button>
+                </div>
+
+                <div className="section">
+                  <div className="section-label alt4">⬇ PBR Maps</div>
+                  <button className="btn" onClick={downloadNormal} disabled={!image} style={{marginBottom:6}}>↓ Normal Map</button>
+                  <button className="btn" onClick={downloadRoughness} disabled={!image} style={{marginBottom:6}}>↓ Roughness</button>
+                  <button className="btn" onClick={downloadAO} disabled={!image} style={{marginBottom:6}}>↓ Ambient Occlusion</button>
+                  <button className="btn" onClick={downloadHeight} disabled={!image} style={{marginBottom:6}}>↓ Height Map</button>
+                  <button className="btn" onClick={downloadEmissive} disabled={!image} style={{marginBottom:6}}>↓ Emissive</button>
+                  <button className="btn primary" onClick={downloadAllPBR} disabled={!image} style={{marginTop:8}}>📦 Download All</button>
+                </div>
+
+                <div className="section">
+                  <div className="section-label alt">⬇ Tile Variants</div>
+                  <button className="btn" onClick={downloadTiled} disabled={!image}>↓ 3×3 Tiled</button>
+                </div>
+
+                <div className="section">
+                  <button className="btn warn" onClick={reset}>↺ Reset All Settings</button>
+                </div>
+
+                <div className="section">
+                  <div className="section-label alt2">⌨ Shortcuts</div>
+                  <div style={{fontFamily:'VT323,monospace',fontSize:14,color:'var(--dim)',lineHeight:1.6}}>
+                    <span className="kbd">Space</span> peek original<br/>
+                    <span className="kbd">G</span> pixel grid overlay
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {/* CANVAS */}
-        <div>
-          {image && (
-            <div className="toggle-view">
-              <button className={view === 'before' ? 'active' : ''} onClick={() => setView('before')}>◐ Original</button>
-              <button className={view === 'after' ? 'active' : ''} onClick={() => setView('after')}>◑ Pixelated</button>
-              <button className={view === 'tiled' ? 'active' : ''} onClick={() => setView('tiled')}>▦ Tiled 3×3</button>
-              <button className={view === 'normal' ? 'active' : ''} onClick={() => setView('normal')}>◤ Normal</button>
-              <button className={view === 'compare' ? 'active' : ''} onClick={() => setView('compare')}>◧ Compare</button>
+        <div className="canvas-shell">
+          <div className="view-bar">
+            <button className={view === 'after' ? 'active' : ''} onClick={() => setView('after')}>◑ Pixelated</button>
+            <button className={view === 'before' ? 'active' : ''} onClick={() => setView('before')}>◐ Original</button>
+            <button className={view === 'compare' ? 'active' : ''} onClick={() => setView('compare')}>◧ Compare</button>
+            <button className={view === 'tiled' ? 'active' : ''} onClick={() => setView('tiled')}>▦ Tiled 3×3</button>
+            <button className={view === 'pbr' ? 'active' : ''} onClick={() => setView('pbr')}>◤ PBR Maps</button>
+            <div className="spacer"></div>
+            <div className="zoom-controls">
+              <button onClick={() => setZoom(Math.max(1, zoom - 1))}>−</button>
+              <span>×{zoom}</span>
+              <button onClick={() => setZoom(Math.min(8, zoom + 1))}>+</button>
             </div>
-          )}
+          </div>
+
           <div
             className="canvas-area"
             onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
@@ -1526,54 +2294,91 @@ function App() {
               <div className={`drop-zone ${dragOver ? 'over' : ''}`}>
                 <div className="big">[ + ]</div>
                 <div className="small">DROP IMAGE OR CLICK LOAD</div>
-                <div className="hint">PNG · JPG · WEBP · GIF · max 1600px</div>
+                <div className="helper">PNG · JPG · WEBP · GIF · max 1600px</div>
               </div>
             )}
 
-            {image && view === 'after' && (
-              <canvas ref={outputCanvasRef} />
+            {image && (showOriginal || view === 'before') && (
+              <canvas
+                ref={beforeCanvasRef}
+                className="smooth"
+                style={{
+                  maxWidth: zoom === 1 ? '100%' : 'none',
+                  width: zoom > 1 ? (sourceCanvasRef.current.width * zoom / 4) + 'px' : 'auto',
+                }}
+              />
             )}
-            {image && view === 'before' && (
-              <canvas ref={beforeCanvasRef} style={{ imageRendering: 'auto' }} />
+            {image && view === 'after' && !showOriginal && (
+              <canvas
+                ref={outputCanvasRef}
+                style={{
+                  maxWidth: zoom === 1 ? '100%' : 'none',
+                  width: zoom > 1 ? (outputDims?.w * zoom * 4) + 'px' : 'auto',
+                  imageRendering: 'pixelated',
+                  outline: showGrid ? '1px solid rgba(255,82,119,0.3)' : 'none',
+                }}
+              />
             )}
-            {image && view === 'tiled' && (
+            {image && view === 'tiled' && !showOriginal && (
               <div className="tile-preview">
-                <canvas ref={tile1Ref} /><canvas ref={tile2Ref} /><canvas ref={tile3Ref} />
-                <canvas ref={tile4Ref} /><canvas ref={tile5Ref} /><canvas ref={tile6Ref} />
-                <canvas ref={tile7Ref} /><canvas ref={tile8Ref} /><canvas ref={tile9Ref} />
+                {tileRefs.current.map((ref, i) => <canvas key={i} ref={ref} />)}
               </div>
             )}
-            {image && view === 'normal' && (
-              <canvas ref={normalCanvasRef} />
+            {image && view === 'pbr' && !showOriginal && (
+              <div className="pbr-grid">
+                <div className="pbr-cell">
+                  <div className="pbr-label">COLOR</div>
+                  <canvas ref={outputCanvasRef} style={{width: 200, imageRendering: 'pixelated'}} />
+                </div>
+                <div className="pbr-cell">
+                  <div className="pbr-label">NORMAL</div>
+                  <canvas ref={normalCanvasRef} style={{width: 200, imageRendering: 'pixelated'}} />
+                </div>
+                <div className="pbr-cell">
+                  <div className="pbr-label">ROUGHNESS</div>
+                  <canvas ref={roughCanvasRef} style={{width: 200, imageRendering: 'pixelated'}} />
+                </div>
+                <div className="pbr-cell">
+                  <div className="pbr-label">A.O.</div>
+                  <canvas ref={aoCanvasRef} style={{width: 200, imageRendering: 'pixelated'}} />
+                </div>
+                <div className="pbr-cell">
+                  <div className="pbr-label">HEIGHT</div>
+                  <canvas ref={heightCanvasRef} style={{width: 200, imageRendering: 'pixelated'}} />
+                </div>
+                <div className="pbr-cell">
+                  <div className="pbr-label">EMISSIVE</div>
+                  <canvas ref={emissiveCanvasRef} style={{width: 200, imageRendering: 'pixelated'}} />
+                </div>
+              </div>
             )}
-            {image && view === 'compare' && (
-              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap: 12, width: '100%'}}>
+            {image && view === 'compare' && !showOriginal && (
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap: 12, width: '100%', maxWidth: 1100}}>
                 <div style={{textAlign:'center'}}>
                   <div style={{fontFamily:'VT323,monospace',color:'var(--dim)',marginBottom:8,letterSpacing:2}}>BEFORE</div>
-                  <canvas ref={beforeCanvasRef} style={{ imageRendering: 'auto', maxWidth: '100%' }} />
+                  <canvas ref={beforeCanvasRef} className="smooth" style={{maxWidth:'100%'}} />
                 </div>
                 <div style={{textAlign:'center'}}>
                   <div style={{fontFamily:'VT323,monospace',color:'var(--accent-2)',marginBottom:8,letterSpacing:2}}>AFTER</div>
-                  <canvas ref={outputCanvasRef} />
+                  <canvas ref={outputCanvasRef} style={{maxWidth:'100%', imageRendering:'pixelated'}} />
                 </div>
               </div>
             )}
           </div>
+
           {image && (
-            <div className="stats">
-              <div>palette: <span>{activePalette.length}</span> colors</div>
-              <div>resolution: <span>{outputDims?.w} × {outputDims?.h}</span></div>
-              <div>scaled from: <span>{imageInfo?.w} × {imageInfo?.h}</span></div>
+            <div className="status-bar">
+              <div>palette: <span>{activePalette.length}</span></div>
+              <div>output: <span>{outputDims?.w} × {outputDims?.h}</span></div>
+              <div>source: <span>{imageInfo?.w} × {imageInfo?.h}</span></div>
               <div>export: <span>{(outputDims?.w || 0) * exportScale} × {(outputDims?.h || 0) * exportScale}</span></div>
-              {seamless && <div style={{color: 'var(--accent-3)'}}>◆ tiling enabled</div>}
+              {seamless && <div style={{color: 'var(--accent-3)'}}>◆ tiling on</div>}
+              {bloom && <div style={{color: 'var(--accent-4)'}}>✦ bloom on</div>}
+              <div className="right">hold <span className="kbd">space</span> to peek original</div>
             </div>
           )}
         </div>
       </div>
-
-      <footer>
-        ◢ READY <span className="blink">█</span>  &nbsp;//&nbsp; ALL PROCESSING LOCAL · NO UPLOADS
-      </footer>
     </div>
   );
 }
